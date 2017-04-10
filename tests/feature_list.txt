@@ -1,0 +1,7 @@
+# Order of the features in this file is significant, so shuffle them carefully.
+features/javascript.feature
+features/java.feature
+features/ruby.feature
+features/dotnet.feature
+features/python.feature
+features/rust.feature

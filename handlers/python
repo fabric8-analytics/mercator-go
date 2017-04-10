@@ -1,0 +1,619 @@
+# Copyright 2016 Red Hat, Inc.
+#
+# Mercator is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# Mercator is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License
+# along with Mercator. If not, see <http://www.gnu.org/licenses/>.
+#
+from __future__ import unicode_literals
+
+import os, subprocess, sys, traceback, ast
+
+from io import open
+from re import compile as regexp
+from json import dumps, loads
+from subprocess import Popen, PIPE
+from collections import defaultdict, namedtuple, deque
+
+is_py3 = sys.version_info >= (3, 2, 0)
+
+# Call invocation of function called `name` found on line `lineno` and column `col`,
+# the method is called on `parent` (can be module/object reference)
+Invocation = namedtuple('Invocation', ['name', 'lineno', 'col', 'parent'])
+
+# Binds object `obj` to particular scope `ScopeContext`
+Scoped = namedtuple('Scoped', ['obj', 'scope'])
+
+# Function call with bound arguments
+FnCall = namedtuple('FnCall', ['func', 'node', 'args'])
+
+# Call arguments for Python functions
+CallArgs = namedtuple('CallArgs', ['args', 'starargs', 'kwargs', 'keywords'])
+
+# Bind name/`value` to AST `node`
+Ident = namedtuple('Ident', ['value', 'node'])
+
+# Resolution by evaluating a `FunctionDef`
+CallResolution = namedtuple('CallResolution', ['function', 'name', 'trivial_read'])
+
+# Resolution by evaluating a module import
+ImportResolution = namedtuple('ImportResolution', ['base', 'name', 'func'])
+
+# Maps function `func` to a `value`
+Resolved = namedtuple('Resolved', ['func', 'value'])
+
+# Minimum interface necessary to open and read a file
+TrivialRead = ['open', 'read']
+
+# This binary will be used for dynamic analysis if necessary
+PYBIN = os.getenv('MERCATOR_PYTHON', 'python')
+
+# captures leading whitespace
+whitespace = regexp('^(\s*)')
+
+# replace call to setup function on line
+setup_sub = regexp('^\s*([\w\._]*setup\()')
+
+# keys we're interested in from extension modules data
+ext_modules_wanted = ['define_macros',
+                      'depends',
+                      'export_symbols',
+                      'extra_compile_args',
+                      'extra_link_args',
+                      'extra_objects',
+                      'include_dirs',
+                      'language',
+                      'libraries',
+                      'library_dirs',
+                      'name',
+                      'runtime_library_dirs',
+                      'sources',
+                      'swig_opts',
+                      'undef_macros']
+
+
+def isA(obj, target):
+    """ Alternative isinstance() using string typing and checking only the first level of inheritance """
+
+    if not obj or not obj.__class__:
+        return False
+
+    if isinstance(target, (list, tuple)):
+        return any(isA(obj, t) for t in target)
+
+    return obj.__class__.__name__ == target
+
+
+class AbstractImport(object):
+    """ Base class for evaluating import statements
+
+    The interface implements two methods, `eval` and `match`,
+    evaluating the finaly import and checking if the import
+    satisfies the given symbol, respectively.
+    """
+    def eval(self, imp, func=None):
+        raise NotImplementedError('unimplemented method')
+
+    def match(self, imp, func=None):
+        raise NotImplementedError('unimplemented method')
+
+
+class _Name(AbstractImport):
+    """ Import a single, potentially aliased, name """
+    def __init__(self, name, alias=None):
+        self.name = name
+        self.alias = alias or name
+
+    def match(self, imp, func=None):
+        return imp == self.alias or imp == self.name
+
+    def eval(self, imp, func=None):
+        return self.alias, func
+
+
+class _FromImport(AbstractImport):
+    """ Import from a module one or more, potentially aliased, name(s) """
+    def __init__(self, base, names):
+        self.base = base
+        self.imports = names
+
+    def match(self, imp, func=None):
+        return self.base == imp and any(i.match(func) or i.name == '*' for i in self.imports)
+
+    def eval(self, imp, func=None):
+        for i in self.imports:
+            if i.match(func) or i.name == '*':
+                return None, i.eval(imp, func)[1]
+        return None, func
+
+
+class ScopeContext(object):
+    """ `ScopedContext` understands the semantics of Python block scopes
+
+    and creates a graph representation of the contained AST nodes
+    """
+
+    ScopedNodesStr = ("ClassDef", "FunctionDef", "Try", "ExceptHandler", "Expression",
+                      "If", "For", "While", "With", "withitem", "Call")
+
+    def __init__(self, parent=None, tag=None):
+        self.parent = parent
+        self.children = deque()
+        self.imports = []
+        self.from_imports = []
+        self.defined_names = {}
+        self.calls = []
+        self.items = []
+        self.tag = tag
+        self.line_mapping = defaultdict(list)
+
+    def get_line_after(self, line, default=None):
+        """ Get a line number where the next AST node is located in terms of current scope chain
+
+        :param line: int, from which line to search
+        :param default:  int, default value to be returned if there's no next AST node
+        :return:
+        """
+        for lineno in sorted(self.line_mapping.keys()):
+            if lineno > line:
+                return lineno - 1
+        p = self.parent
+        while p:
+            v = p.get_line_after(line, None)
+            if v:
+                return v
+            p = p.parent
+        return default
+
+    def add_item(self, item):
+        """ Add the given AST node into the current scope
+
+        :param item: ast.Node, node to add
+        :return:
+        """
+        lineno = getattr(item, 'lineno', None)
+        if lineno:
+            self.line_mapping[lineno].append(item)
+
+        self.items.append(item)
+        # Handle Calls by Name/Attribute and Import/ImportFrom specially so that we
+        # can add them directly to `ScopedContext`'s respective fields
+        if isA(item, "Call"):
+            n, v = item.func, None
+            if isA(n, "Name"):
+                v = Invocation(n.id, n.lineno, item.col_offset, None)
+            elif isA(n, "Attribute"):
+                attributes, a = [], n
+                # iterate the attribute chain
+                while isA(a, "Attribute"):
+                    attributes.append(a.attr)
+                    a = a.value
+                if isA(a, "Call"):
+                    attributes.append(self.add_item(a))
+                else:
+                    attributes.append(a.id)
+                    v = Invocation(n.attr, n.lineno, item.col_offset, list(attributes))
+            self.calls.append(v)
+            return v
+        # import ...
+        elif isA(item, "Import"):
+            for name in item.names:
+                self.imports.append(_Name(name.name, name.asname))
+
+            return None
+        # from ... import ...
+        elif isA(item, "ImportFrom"):
+            names = []
+            for name in item.names:
+                names.append(_Name(name.name, name.asname))
+            self.from_imports.append(_FromImport(item.module, names))
+            return None
+
+    def push(self, tag=None):
+        """ Add new ScopedContext child with an optional tag and return it
+
+        :param tag:
+        :return:
+        """
+        new_scope = ScopeContext(self, tag)
+        self.children.append(new_scope)
+        return new_scope
+
+    def find_imports(self, name, imp_rec=None):
+        """ Find all imports from `name` and return the nodes and the given scopes """
+        imports = imp_rec if imp_rec is not None else []
+        for n in self.imports:
+            if n.match(name):
+                imports.append(Scoped(n, self))
+        for n in self.from_imports:
+            if n.base == name:
+                imports.append(Scoped(n, self))
+        for child in self.children:
+            child.find_imports(name, imports)
+        return imports
+
+    def find_calls(self, name, calls_rec=None):
+        """ Find all function calls of function `name` and return the nodes and the given scopes """
+        calls = calls_rec if calls_rec is not None else []
+        for call in self.calls:
+            if call and call.name == name:
+                calls.append(Scoped(call, self))
+        for child in self.children:
+            child.find_calls(name, calls)
+        return calls
+
+    def descend(self, nodes):
+        """ Recursively scan all nodes """
+        def children(node):
+            return [n for n in ast.iter_child_nodes(node)]
+
+        for obj in nodes:
+            s = self
+
+            # string typying makes this run on all versions of Python (2.4+; 3.0+)
+            if isA(obj, self.ScopedNodesStr):
+                s = self.push(obj)
+                s.descend(children(obj))
+            else:
+                s.descend(children(obj))
+
+            s.add_item(obj)
+
+    def inspect_call(self, call):
+        """ Inspect function `call` in `scope` and return all function and import resolutions """
+
+        defs, imports = [], []
+        args = inspect_args(call)
+        functions = scan_arguments(flatten_args(args), FnCall)
+
+        for func in functions:
+            outer = func.func[-1].value
+            fndef = self.get_function_def(outer)
+
+            if fndef:
+                for f in fndef:
+                    defs.append(CallResolution(f.obj, func, check_impl_trivial_read(f)))
+            else:
+                imports.append(ImportResolution('.'.join([x.value for x in func.func[:-1]]),
+                                                func.func[-1].value, func))
+        return (defs, imports)
+
+    def dump_arguments(self, call, resolve=True):
+        """ Dump expanded arguments for `call` in `scope`, optionally invoke resolved objects if `resolved` """
+        resolved, args = [], inspect_args(call)
+
+        if resolve:
+            crs, irs = self.inspect_call(call)
+
+            for callres in crs:
+                resolved.append(Resolved(callres.name, do_call_resolution(callres)))
+
+            for impres in irs:
+                resolved.append(Resolved(impres.func, do_import_resolution(impres)))
+
+        return expand_arguments(args, resolved)
+
+    def get_function_def(self, name, defsrec=None):
+        """ Get function definitions """
+        defs = defsrec if defsrec is not None else []
+
+        for item in self.items:
+            if isA(item, "FunctionDef") and item.name == name:
+                defs.append(Scoped(item, self))
+
+        for child in self.children:
+            get_function_def(child, name, defs)
+
+        return defs
+
+
+def flatten_args(args):
+    """ Flatten function arguments """
+    return args.args + args.starargs + [args.kwargs] + [v for k, v in args.keywords]
+
+
+def scan_arguments(arguments, typ, argsrec=None):
+    """ Scan the argument list for instances of type `type` """
+    args = argsrec if argsrec is not None else []
+    for arg in arguments:
+        if isinstance(arg, list):
+            scan_arguments(arg, typ, args)
+        elif isinstance(arg, dict):
+            scan_arguments(arg.values(), typ, args)
+        elif isinstance(arg, typ):
+            args.append(arg)
+    return args
+
+
+def get_resolved(func, resolutions):
+    """ Get the resolution target for function `a` from resolved entries `bs` """
+    res = [r.value for r in resolutions if r.func == func]
+    if res:
+        return res.pop()
+    return func
+
+
+def expand_arguments(args, resolved):
+    """ Get resolved values for function calls """
+    kwargs, star, keywords, arg = None, [], [], []
+    for a in args.args:
+        if isinstance(a, FnCall):
+            arg.append(get_resolved(a, resolved))
+        else:
+            arg.append(a)
+    for a in args.starargs:
+        if isinstance(a, FnCall):
+            star.append(get_resolved(a, resolved))
+        else:
+            star.append(a)
+    if args.kwargs:
+        if isinstance(args.kwargs, FnCall):
+            kwargs = (get_resolved(args.kwargs, resolved))
+        else:
+            kwargs = args.kwargs
+    for a in args.keywords:
+        if isinstance(a[1], FnCall):
+            keywords.append((a[0], get_resolved(a[1], resolved)))
+        else:
+            keywords.append(a)
+    return CallArgs(arg, star, kwargs, keywords)
+
+
+def check_impl_trivial_read(node):
+    """ Checks whether the current scope executes trivial open('...').read() operation """
+    calls = []
+    for child in node.scope.children:
+        for node in child.items:
+            if isA(node, "Call"):
+                calls.append(eval_value(node))
+    funcs = [c.func[-1].value for c in calls]
+    sf, tf = set(funcs), set(TrivialRead)
+    return (sf & tf) == tf
+
+
+def do_import_resolution(impres):
+    """ Import by means of dynamic code execution from the target module"""
+    m = ast.fix_missing_locations(
+        ast.Module([ast.ImportFrom(impres.base, [ast.alias(impres.name, None)], 0)])
+    )
+    exec(compile(m, '<ast>', 'exec'))
+    to_invoke = locals()[impres.name]
+    return to_invoke()
+
+
+def do_call_resolution(callres):
+    """ Function call by means of dynamic code execution """
+    if not callres.trivial_read:
+        return None
+    m = ast.fix_missing_locations(
+        ast.Module([callres.function])
+    )
+    exec(compile(m, '<ast>', 'exec'))
+    to_invoke = locals()[callres.name.func[-1].value]
+    return to_invoke(*callres.name.args.args)
+
+
+def inspect_args(item):
+    """ Evaluate arguments of the given call node and return new `CallArgs` """
+    kwargs, star, keywords, args = [], [], [], []
+    if getattr(item, 'kwargs', None):
+        kwargs = eval_value(item.kwargs)
+    if getattr(item, 'starargs', None):
+        star = eval_value(item.starargs)
+    for kw in item.keywords or []:
+        keywords.append((kw.arg, eval_value(kw.value)))
+    for a in item.args or []:
+        args.append(eval_value(a))
+    return CallArgs(args, star, kwargs, keywords)
+
+
+def eval_value(value):
+    """ Evaluate the given node, no code execution can happen here """
+    if isA(value, "List"):
+        return list(map(eval_value, value.elts))
+    elif isA(value, "Dict"):
+        keys = map(eval_value, value.keys)
+        values = map(eval_value, value.values)
+        return dict(zip(keys, values))
+    elif isA(value, "Str"):
+        return value.s
+    elif isA(value, "NameConstant"):
+        return value.value
+    elif isA(value, "Name"):
+        return value.id
+    elif isA(value, "Num"):
+        return value.n
+    elif isA(value, "Call"):
+        call = None
+        if isA(value.func, "Name"):
+            call = [Ident(value.func.id, value.func)]
+        elif isA(value.func, "Attribute"):
+            attributes, a = [], value.func
+            while isA(a, "Attribute"):
+                attributes.append(Ident(a.attr, a))
+                a = a.value
+            if isA(a, "Call"):
+                attributes.append(eval_value(a))
+            else:
+                attributes.append(Ident(a.id, a))
+            call = list(reversed(attributes))
+        return FnCall(call, value, inspect_args(value))
+    else:
+        return None
+
+
+def get_setup_calls(src):
+    """ Return line number and column of function call to `setup`, resolve objects via dynamic code execution when
+    `code execution` is `True` """
+    num_lines = src.count('\n')
+    tree = ast.parse(src)
+
+    scope = ScopeContext()
+    scope.descend(tree.body)
+
+    modules = ('setuptools', 'distutils.core')
+
+    for module in modules:
+        for s in scope.find_imports(module):
+            name, setup = 'setup', module
+
+            if s.obj.match(setup, name):
+                # evaluate import aliases
+                nm, nf = s.obj.eval(setup, name)
+                if nf:
+                    name = nf
+                setup = nm
+            for c in s.scope.find_calls(name):
+                # check that we're handling proper `setup` function
+                if setup is None:
+                    if c.obj.parent is not None:
+                        continue
+                else:
+                    parent = c.obj.parent.pop() if c.obj.parent else None
+                    if parent != setup:
+                        continue
+
+                start = c.obj.lineno
+                end = s.scope.get_line_after(start, num_lines)
+                call = c.scope.items[-1]
+
+                yield start, end, Scoped(call, scope)
+
+
+def is_dict_simple(d):
+    """ Determine if the dictionary contains only simple types """
+    simple_types = ["list", "dict", "str", "unicode", "int", "bool", "float"]
+    is_simple = True
+
+    for (k, v) in d.items():
+        if isA(v, "dict"):
+            is_simple &= is_dict_simple(v)
+        elif isA(v, "list"):
+            for val in v:
+                if isA(val, "dict"):
+                    is_simple &= is_dict_simple(val)
+        elif not isA(v, simple_types):
+            return False
+
+    return is_simple
+
+
+def leading_whitespace(line):
+    """ Return leading whitespace of `line` """
+    m = whitespace.match(line)
+    if m:
+        return m.group(0)
+
+
+def get_inject_code_distutils(setup, fd, indent=' '):
+    """ Creates mocked version of setup() method """
+    def _indent(line, level):
+        return (indent * level) + line
+
+    return ['def ___setup(**kw):\n',
+            _indent('from json import JSONEncoder\n', 1),
+            _indent('class _encoder(JSONEncoder):\n', 1),
+            _indent('def default(self, o):\n', 2),
+            _indent('try:\n', 3),
+            _indent('iterable = iter(o)\n', 4),
+            _indent('except TypeError:\n', 3),
+            _indent('pass\n', 4),
+            _indent('else:\n', 3),
+            _indent('return list(iterable)\n', 4),
+            _indent('return JSONEncoder.default(self, o)\n', 3),
+            _indent('wanted = ' + str(ext_modules_wanted) + '\n', 1),
+            _indent('import json\n', 1),
+            _indent('exts = dict([(k, v) for k, v in dict(kw).items() if k in ["ext_modules"]])\n', 1),
+            _indent('newexts = []\n', 1),
+            _indent('if "ext_modules" in exts:\n', 1),
+            _indent('for v in exts["ext_modules"]:\n', 2),
+            _indent('newexts.append(dict([(attr, getattr(v, attr)) for attr in wanted]))\n', 3),
+            _indent('if "cmdclass" in kw:\n', 1),
+            _indent('del(kw["cmdclass"])\n',  2),
+            _indent('kw["ext_modules"] = newexts\n', 1),
+            _indent('import os,sys;os.write({fd},json.dumps(kw,indent=3,cls=_encoder).encode("utf-8"));os.close({fd});sys.exit(0)\n\n'.format(fd=fd), 1)]
+
+
+def invoke_handler(code, rfd, wfd, bufsize=512):
+    if is_py3:
+        process = Popen([PYBIN, '-'], stdin=PIPE, stdout=PIPE, stderr=PIPE, pass_fds=(wfd,))
+        out, err = process.communicate(bytes(code, 'utf-8'))
+    else:
+        process = Popen([PYBIN, '-'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        out, err = process.communicate(code)
+
+    if process.returncode != 0:
+        raise ValueError(err)
+    os.close(wfd)
+    data, r = '', os.read(rfd, bufsize)
+    while r:
+        if is_py3:
+            data += r.decode('utf-8')
+        else:
+            data += r
+        r = os.read(rfd, bufsize)
+    os.close(rfd)
+    return data
+
+
+def process_file(setup):
+    """ Process setup.py in `setup` and return back JSON """
+
+    sa = os.path.abspath(setup)
+    os.chdir(os.path.dirname(sa))
+    code = open(sa, 'r').read()
+
+    calls = list(get_setup_calls(code))
+    if not calls:
+        return dumps({'error': 'no calls to setup found for: {}'.format(sa)})
+
+    if len(calls) > 1:
+        items = [{'start': s, 'end': e} for (s, e, a) in calls]
+        return dumps({'error': 'multiple competing setup calls', 'detail': items})
+
+    start, end, call = calls.pop()
+    with open(sa, mode='r', encoding='utf-8') as original:
+        read, write = os.pipe()
+
+        orig_lines = original.readlines()
+
+        # line of the call
+        call = orig_lines[start - 1]
+
+        # detect block scope
+        whitespace = leading_whitespace(call)
+
+        # prepare code for injection
+        code = get_inject_code_distutils(sa, write, '\t' if '\t' in whitespace else '    ')
+        if whitespace:
+            # prepend detected whitespace to injected code
+            code = [whitespace + line for line in code]
+
+        # compose code lines
+        new_lines = ''.join(
+            orig_lines[:start - 1] +                  # all code before setup() call
+            code +                                    # injected code
+            [setup_sub.sub('___setup(', call)] +      # line of the call with setup call replaced
+            orig_lines[start:]                        # rest of the file
+        )
+
+        try:
+            data = loads(invoke_handler(new_lines, read, write))
+            return dumps(data)
+        except ValueError as err:
+            return dumps({'error': str(err)})
+
+
+if __name__ == '__main__':
+    execute = os.environ.get('MERCATOR_INTERPRET_SETUP_PY', 'false')
+    if execute not in ['true', '1']:
+        print(dumps({'error': 'MERCATOR_INTERPRET_SETUP_PY not set to "true" or "1", exiting'}))
+    else:
+        for setup in sys.argv[1:]:
+            print(process_file(setup))

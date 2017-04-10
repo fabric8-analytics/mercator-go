@@ -1,0 +1,7 @@
+  - name: "RustCrate"
+    description: "A Rust Crate for Cargo"
+    handler: "rust"
+    filepatterns:
+     - "^Cargo\\.toml$"
+    lockfile:
+     - "Cargo\\.lock$"

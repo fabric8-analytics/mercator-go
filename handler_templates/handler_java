@@ -1,0 +1,18 @@
+  - name: "Java-JAR"
+    description: "Java JAR"
+    types:
+     - "application/zip"
+    inarchive:
+     - "META-INF/MANIFEST.MF"
+    handler: "java"
+    binary: "java"
+    args:
+     - "-jar"
+  - name: "Java-POM"
+    description: "Java pom.xml file"
+    filepatterns:
+      - "^pom\\.xml$"
+    binary: "java"
+    handler: "java"
+    args:
+      - "-jar"

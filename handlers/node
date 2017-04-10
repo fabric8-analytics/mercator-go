@@ -1,0 +1,21 @@
+/*
+ Copyright 2016 Red Hat, Inc.
+
+ Mercator is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ Mercator is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ You should have received a copy of the GNU Lesser General Public License
+ along with Mercator. If not, see <http://www.gnu.org/licenses/>.
+*/
+var fs = require('fs');
+var obj = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+if (process.argv.length > 3) {
+  var lockfile = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
+  obj["_dependency_tree_lock_file"] = lockfile
+}
+console.log(JSON.stringify(obj));

@@ -1,0 +1,10 @@
+  - name: "DotNetSolution"
+    description: ".NET Solution file"
+    binary: "mono"
+    handler: "dotnet"
+    filepatterns:
+     - "^.*\\.sln$"
+     - "^.*\\.dll$"
+     - "^.*\\.nupkg$"
+     - "^.*\\.nuspec$"
+     - "^AssemblyInfo\\.cs$"

@@ -1,0 +1,8 @@
+[package]
+name = "mercator-rust-handler"
+version = "0.0.1"
+authors = ["Pavel Odvody <podvody@redhat.com>"]
+
+[dependencies]
+cargo = "0.13.0"
+rustc-serialize = "0.3.19"

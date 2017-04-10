@@ -1,0 +1,41 @@
+# Copyright 2016 Red Hat, Inc.
+#
+# Mercator is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# Mercator is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License
+# along with Mercator. If not, see <http://www.gnu.org/licenses/>.
+#
+require 'json'
+require 'pathname'
+
+spec = nil
+
+begin
+  # change into the directory with gemspec and try to
+  # evaluate the code
+  p = Pathname.new(ARGV[0])
+  a = File.absolute_path(p)
+  Dir.chdir(p.dirname)
+  spec = Gem::Specification.load(a)
+rescue
+  o = {}
+  o["error"] = "Unable to process gemspec"
+  puts JSON.dump(o)
+  exit
+end
+
+# enumerate all attributes and feed them into a dict
+obj = {}
+spec.class.attribute_names.find_all do |var|
+  val = spec.instance_variable_get("@#{var}")
+  obj[var] = val if val
+end
+
+# print out as a JSON
+puts JSON.dump(obj)

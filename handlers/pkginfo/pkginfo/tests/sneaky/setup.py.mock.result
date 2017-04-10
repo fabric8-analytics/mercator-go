@@ -1,0 +1,23 @@
+{
+   "ext_modules": [], 
+   "name": "namespaced.sneaky", 
+   "author": "Tres Seaver", 
+   "author_email": "tseaver@palladion.com", 
+   "zip_safe": false, 
+   "namespace_packages": [
+      "namespaced"
+   ], 
+   "version": "0.1", 
+   "package_dir": {
+      "": "src"
+   }, 
+   "install_requires": [
+      "setuptools"
+   ], 
+   "packages": [
+      "namespaced", 
+      "namespaced.sneaky"
+   ], 
+   "long_description": "Blah, blah.", 
+   "description": "Test namespaced packages with non-root egg-info."
+}

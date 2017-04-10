@@ -1,0 +1,17 @@
+import json
+import sys
+
+requirements = []
+
+with open(sys.argv[1], 'r') as f:
+    lines = [l.strip() for l in f.readlines()]
+    for l in lines:
+        comment = l.find('#')
+        if comment != -1:
+            l = l[:comment]
+        l = l.strip()
+        if not l:
+            continue
+        requirements.append(l)
+
+print(json.dumps({'dependencies': requirements}))

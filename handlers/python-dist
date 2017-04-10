@@ -1,0 +1,179 @@
+# Copyright 2016 Red Hat, Inc.
+#
+# Mercator is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# Mercator is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License
+# along with Mercator. If not, see <http://www.gnu.org/licenses/>.
+#
+from __future__ import unicode_literals
+from io import open
+from os import path
+import sys
+# adjust import path for bundled pkginfo
+__me = path.dirname(__file__)
+sys.path.append(path.join(__me, 'pkginfo'))
+from pkginfo import Wheel, BDist
+from json import load, dumps
+
+
+class PythonDist:
+    Develop = 1
+    Egg = 2
+    Wheel = 4
+    Json = 8
+
+
+def get_file_kind(fn):
+    "Get `PythonDist` from file name"
+    if fn.endswith('.egg'):
+        return PythonDist.Egg
+    elif fn.endswith('.egg-info'):
+        return PythonDist.Develop
+    elif fn.endswith('.whl'):
+        return PythonDist.Wheel
+    elif fn == 'PKG-INFO':
+        return PythonDist.Develop
+    elif fn == 'metadata.json':
+        return PythonDist.Json
+    else:
+        raise ValueError('Unhandled file name {}'.format(fn))
+
+
+def _pkginfo_to_dictionary(obj):
+    "Converts PkgInfo object to a dictionary"
+    return obj.__dict__
+
+
+def _handle_json(fpath):
+    "Handle metadata.json file"
+    with open(fpath, encoding='utf-8') as fd:
+      return load(fd)
+
+
+def _handle_egg(fpath):
+    "Handle *.egg file"
+    bd = BDist(fpath)
+    return _pkginfo_to_dictionary(bd)
+
+
+def _handle_wheel(fpath):
+    "Handle *.whl file"
+    wh = Wheel(fpath)
+    return _pkginfo_to_dictionary(wh)
+
+
+def _handle_develop(fpath):
+    "Handle PKG-INFO and .egg-info files"
+    triggers = ('Name: ', 'Version: ', 'Summary: ', 'Home-page: ', 'License: ',
+                'Author: ', 'Author-email: ', 'Description: ', 'Classifier: ', 'Platform: ',
+                'Download-URL: ', 'Keywords: ')
+
+    def _get_trigger_on_line(line):
+        "Return name of the trigger or None"
+        for trigger in triggers:
+            if line.startswith(trigger):
+                return trigger
+
+    def _store_value(props, key, val):
+        """ Store val in props[key] as string """
+        val = val or ''
+        if key not in props:
+            props[key] = val
+        else:
+            if val:
+                props[key] = props[key] + '\n' + val
+
+    """ Example PKG-INFO data
+        ---------------------
+
+        Metadata-Version: 1.1
+        Name: backports.ssl_match_hostname
+        Version: 3.5.0.1
+        Summary: The ssl.match_hostname() function from Python 3.5
+        Home-page: http://bitbucket.org/brandon/backports.ssl_match_hostname
+        Author: Toshio Kuratomi
+        Author-email: toshio@fedoraproject.org
+        License: Python Software Foundation License
+        Description:
+                The ssl.match_hostname() function from Python 3.5
+                =================================================
+
+                The Secure Sockets Layer is only actually *secure*
+                if you check the hostname in the certificate returned
+                by the server to which you are connecting,
+                and verify that it matches to hostname
+                that you are trying to reach.
+
+                (snip)
+
+        Platform: UNKNOWN
+        Classifier: Development Status :: 5 - Production/Stable
+        Classifier: License :: OSI Approved :: Python Software Foundation License
+        Classifier: Programming Language :: Python :: 2.4
+        Classifier: Programming Language :: Python :: 2.5
+        Classifier: Programming Language :: Python :: 2.6
+        Classifier: Programming Language :: Python :: 2.7
+        Classifier: Programming Language :: Python :: 3
+        Classifier: Programming Language :: Python :: 3.0
+        Classifier: Programming Language :: Python :: 3.1
+        Classifier: Topic :: Security :: Cryptography
+    """
+
+    properties = {}
+    p, data = None, []
+
+    """ Some notes about the format and how the parser below works:
+        * Lines either start with a well defined 'trigger' or are appended to the last seen trigger
+          * Well defined means that it's listed in `triggers` list
+        * The trove classifiers are all collated into a single key 'classifiers'
+    """
+    with open(fpath, mode='r', encoding='utf-8') as f:
+        for line in f.readlines():
+            trigger = _get_trigger_on_line(line)
+            if trigger:
+                # we've seen a trigger and now we see another trigger
+                # so put the old one into the dictionary
+                if p:
+                    _store_value(properties, p, data)
+                    p = None
+                sc = trigger.index(':')
+                p, data = trigger[:sc].lower(), line[sc+2:].strip()
+            else:
+                if p:
+                    if data:
+                        # if we already have data, write them out first
+                        _store_value(properties, p, data)
+                        data = None
+                    # if there was a trigger on previous line, append to it
+                    _store_value(properties, p, line.strip())
+
+    if p and data:
+        # flush out the last remaining
+        _store_value(properties, p, data)
+
+    return properties
+
+
+def process_file(mdfile):
+    ""
+    _, name = path.split(mdfile)
+
+    switch = {PythonDist.Egg: _handle_egg,
+              PythonDist.Wheel: _handle_wheel,
+              PythonDist.Develop: _handle_develop,
+              PythonDist.Json: _handle_json}
+
+    selector = get_file_kind(name)
+
+    return dumps(switch.get(selector)(mdfile))
+
+
+if __name__ == '__main__':
+  for f in sys.argv[1:]:
+    print(process_file(f))

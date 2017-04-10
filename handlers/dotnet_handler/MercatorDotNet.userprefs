@@ -1,0 +1,15 @@
+﻿<Properties StartupItem="MercatorDotNet/MercatorDotNet.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="MercatorDotNet/Program.cs">
+    <Files>
+      <File FileName="MercatorDotNet/packages.config" Line="1" Column="1" />
+      <File FileName="MercatorDotNet/App/MetadataHandler.cs" Line="1" Column="1" />
+      <File FileName="MercatorDotNet/App/Providers/SolutionMetadataProvider.cs" Line="116" Column="40" />
+      <File FileName="MercatorDotNet/Program.cs" Line="33" Column="22" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

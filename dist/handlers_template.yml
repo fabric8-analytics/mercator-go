@@ -1,0 +1,64 @@
+version: "1.0.0"
+directory: "/usr/share/mercator"
+ecosystems:
+  - name: "Python"
+    description: "PyPI Package (source)"
+    filepatterns:
+     - "^setup\\.py$"
+    binary: "python3"
+    handler: "python"
+  - name: "Python-Dist"
+    description: "Installed PyPI Package"
+    pathpatterns:
+     - "^.*\\.dist-info/metadata\\.json$"
+    filepatterns:
+     - "^PKG-INFO$"
+    handler: "python-dist"
+    binary: "python3"
+  - name: "Python-RequirementsTXT"
+    description: "Python requirements.txt file"
+    filepatterns:
+      - "^requirements\\.txt$"
+    binary: "python3"
+    handler: "python-requirements"
+  - name: "Ruby-Dist"
+    description: "Installed RubyGem"
+    pathpatterns:
+     - "^.*/specifications/.*\\.gemspec$"
+    handler: "ruby"
+    binary: "ruby"
+  - name: "Ruby"
+    description: "RubyGem Package"
+    filepatterns:
+     - "^[Gg]emspec$"
+     - "^.*\\.[Gg]emspec$"
+    lockfile:
+     - "Gemfile\\.lock$"
+    handler: "ruby"
+    binary: "ruby"
+  - name: "NPM"
+    description: "NPMs package.json"
+    filepatterns:
+     - "^package\\.json$"
+    lockfile:
+     - "npm-shrinkwrap\\.json$"
+    binary: "node"
+    handler: "node"
+  - name: "Java-JAR"
+    description: "Java JAR"
+    types:
+     - "application/zip"
+    inarchive:
+     - "META-INF/MANIFEST.MF"
+    handler: "java"
+    binary: "java"
+    args:
+     - "-jar"
+  - name: "Java-POM"
+    description: "Java pom.xml file"
+    filepatterns:
+      - "^pom\\.xml$"
+    binary: "java"
+    handler: "java"
+    args:
+      - "-jar"
