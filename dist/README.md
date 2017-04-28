@@ -2,8 +2,8 @@
 
 ## How to build Mercator Go for OpenShift
 
-1. Clone the repo from https://github.com/baytemp/mercator-go.git 
-2. Go to the cloned repo dir and build `mercator` by running (follow the instructions from https://github.com/baytemp/mercator-go):
+1. Clone the repo from https://github.com/fabric8-analytics/mercator-go.git 
+2. Go to the cloned repo dir and build `mercator` by running (follow the instructions from https://github.com/fabric8-analytics/mercator-go):
 
    ```sh
 $ make build  # probably you would like to specify `GOPATH` environment variable as well

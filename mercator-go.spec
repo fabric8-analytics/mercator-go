@@ -6,7 +6,7 @@ Version:	1.0.0
 Release:	2%{?dist}
 Summary:	Mercator CLI tool
 
-URL:		github.com/baytemp/%{name}-go
+URL:		github.com/fabric8-analytics/%{name}-go
 Source0: %{name}-go.tar.gz
 # data normalizer source code
 #Source1: %{name}.py
