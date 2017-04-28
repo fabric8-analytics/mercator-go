@@ -3,6 +3,10 @@ Mercator 2.0
 
 This is a 2.0 version of Mercator tool, rewritten from Python to Go
 
+## Contributing
+
+See our [contributing guidelines](https://github.com/fabric8-analytics/common/blob/master/CONTRIBUTING.md) for more info.
+ 
 ## Installation & Running
 
 Make sure that your `GOPATH` is set, then the following packages are necessary to fully build without handlers:
