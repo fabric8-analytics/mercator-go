@@ -15,7 +15,7 @@ rm -rf "${RPMBUILD_ROOT}"/*
 
 	git archive --prefix="mercator/" -o "mercator-go-${MERCATOR_VERSION}.tar.gz" HEAD
 	# TODO: Pinned specific version because github repo is private
-	curl https://raw.githubusercontent.com/baytemp/worker/master/cucoslib/data_normalizer.py?token=APPXcH3SGOqOQje3nRuy8fHyNB0AaoNXks5Y9HVdwA%3D%3D -o data_normalizer.py
+	curl https://raw.githubusercontent.com/fabric8-analytics/worker/master/cucoslib/data_normalizer.py?token=APPXcH3SGOqOQje3nRuy8fHyNB0AaoNXks5Y9HVdwA%3D%3D -o data_normalizer.py
 	# we need to build java handler as RPM build fails in copr for EPEL-6
         make -C handlers/java_handler
 	

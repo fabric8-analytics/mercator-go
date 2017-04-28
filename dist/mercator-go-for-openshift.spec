@@ -6,7 +6,7 @@ Version:	1
 Release:	15%{?dist}
 Summary:	Mercator CLI tool
 
-URL:		github.com/baytemp/%{name}-go
+URL:		github.com/fabric8-analytics/%{name}-go
 
 Source0: %{name}-go.tar.gz
 # prebuild binary
