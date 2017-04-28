@@ -3,12 +3,12 @@
 
 Name:		mercator
 Version:	1
-Release:	15%{?dist}
+Release:	16%{?dist}
 Summary:	Mercator CLI tool
+License:	ASL 2.0
+URL:		https://github.com/fabric8-analytics/%{name}-go
 
-URL:		github.com/fabric8-analytics/%{name}-go
-
-Source0: %{name}-go.tar.gz
+Source0:	%{name}-go.tar.gz
 # prebuild binary
 Source1: %{name}
 # data normalizer source code
@@ -20,7 +20,7 @@ BuildRequires:	make
 #Requires:	java-devel maven
 
 %description
-Mercator is which obtains manifests from various ecosystems such as NPM, .NET, Java and Python
+Mercator obtains manifests from various ecosystems such as NPM, .NET, Java and Python
 
 %prep
 %setup -q -n mercator
@@ -65,6 +65,9 @@ chmod +x $RPM_BUILD_ROOT%{_prefix}/bin/run_mercator
 %doc
 
 %changelog
+* Fri Apr 28 2017 Jiri Popelka <jpopelka@redhat.com> - 1-16
+- Add License and change URL
+
 * Mon Apr 03 2017 Slavek Kabrda <bkabrda@redhat.com> - 1-15
 - Fix handlers template for Python dist
 
