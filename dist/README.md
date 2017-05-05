@@ -10,5 +10,5 @@ $ make build  # probably you would like to specify `GOPATH` environment variable
    ```
 
 3. Enter `dist` dir and run `./build-for-openshift.sh` (uses `mercator-for-openshift.spec` specfile). Make sure you have enabled ecosystems that you want to use in `mercator-for-openshift.spec` (in the `%install` section).
-4. Use your source RPM at https://copr.devel.redhat.com/coprs/fpokorny/mercator-go. Do not use podvody/mercator-go as we use it in Bayesian development.
+4. Use Mercator's Fedora Copr at https://copr.fedorainfracloud.org/coprs/jpopelka/mercator/
 
