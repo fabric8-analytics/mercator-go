@@ -10,10 +10,8 @@ node('docker') {
     stage('Unit Tests') {
         dockerCleanup()
 
-        dir('tests') {
-            timeout(30) {
-                sh './runtest.sh'
-            }
+        timeout(30) {
+            make check 
         }
     }
 }
