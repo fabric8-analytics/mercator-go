@@ -11,7 +11,7 @@ node('docker') {
         dockerCleanup()
 
         timeout(30) {
-            make check 
+            sh "make check"
         }
     }
 }
