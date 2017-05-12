@@ -57,6 +57,7 @@ def get_scan_info(context):
 
 @when('Scanning the setup.py file')
 def get_scan_info(context):
+    os.environ["MERCATOR_INTERPRET_SETUP_PY"] = "true"
     context.out = subprocess.check_output(['mercator', SCANNED_SETUP_PY]).decode('utf-8')
     context.ecosystem = 'python'
 
