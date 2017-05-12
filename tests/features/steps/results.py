@@ -14,7 +14,7 @@ java_result = {'digests': {'manifest': '5d6f9b6a9ddca2a28c0216cc44efb2e20d9c23b5
                  'Created-By': 'Apache Maven Bundle Plugin'},
     'pom.xml': {'artifactId': 'json-simple',
                 'dependencies': {'compile': {'junit:junit::': '4.10'}},
-				'description': 'A simple Java toolkit for JSON',
+                'description': 'A simple Java toolkit for JSON',
                 'groupId': 'com.googlecode.json-simple',
                 'name': 'JSON.simple',
                 'url': 'http://code.google.com/p/json-simple/',
@@ -62,6 +62,6 @@ python_result = {'digests': {'manifest': '9503dba97ea4fccebc9f942868fadf4d2c16ea
                             'description': 'Python Distribution Utilities',
                             'ext_modules': [],
                             'packages': ['distutils', 'distutils.command'], 'author': 'Greg Ward',
-                            'author_email': 'gward@python.net', 'description': 'Python Distribution Utilities',
+                            'author_email': 'gward@python.net',
                             'version': '1.0', 'name': 'Distutils'}}
 rust_result = {'result': {'repository': None, 'readme': None, 'authors': ['Pavel Odvody <podvody@redhat.com>'], 'homepage': None, 'keywords': [], 'description': None, 'documentation': None, 'license': None, 'license_file': None, 'package': {'source': None, 'manifest_path': '/mercator-go/tests/fixtures/rust/Cargo.toml', 'features': {}, 'dependencies': [{'uses_default_features': True, 'req': '^0.3.19', 'source': 'registry+https://github.com/rust-lang/crates.io-index', 'features': [], 'optional': False, 'kind': None, 'target': None, 'name': 'rustc-serialize'}, {'uses_default_features': True, 'req': '^0.13.0', 'source': 'registry+https://github.com/rust-lang/crates.io-index', 'features': [], 'optional': False, 'kind': None, 'target': None, 'name': 'cargo'}], 'targets': [{'src_path': '/mercator-go/tests/fixtures/rust/src/main.rs', 'kind': ['bin'], 'name': 'mercator-rust-handler'}], 'id': 'mercator-rust-handler 0.0.1 (path+file:///mercator-go/tests/fixtures/rust)', 'version': '0.0.1', 'name': 'mercator-rust-handler'}}, 'ecosystem': 'RustCrate', 'digests': {'manifest': 'c943ee4a308e49c29208a75d06bd771d7dc5c7ea'}}

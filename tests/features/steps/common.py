@@ -14,13 +14,14 @@ SCANNED_RUBY = 'fixtures/ruby'
 SCANNED_DOTNET = 'fixtures/dotnet'
 SCANNED_RUST = 'fixtures/rust'
 
-result_dict = {'javascript' : javascript_result,
-               'java' : java_result,
-               'ruby' : ruby_result,
-               'dotnet' : dotnet_result,
-               'python' : python_result,
+result_dict = {'javascript': javascript_result,
+               'java': java_result,
+               'ruby': ruby_result,
+               'dotnet': dotnet_result,
+               'python': python_result,
                'rustcargo': rust_result
                }
+
 
 def compare_dictionaries(a, b):
     def mapper(item):
@@ -35,25 +36,29 @@ def compare_dictionaries(a, b):
     res = mapped_a == mapped_b
 
     if not res:
-        print(json.dumps(a, sort_keys=True, separators=(',', ': '), indent = 2), file=sys.stderr)
-        print(json.dumps(b, sort_keys=True, separators=(',', ': '), indent = 2), file=sys.stderr)
+        print(json.dumps(a, sort_keys=True, separators=(',', ': '), indent=2), file=sys.stderr)
+        print(json.dumps(b, sort_keys=True, separators=(',', ': '), indent=2), file=sys.stderr)
 
     return res
+
 
 @given('We have mercator installed')
 def step_impl(context):
     # this is workaround until mercator -h returns true
     subprocess.check_output(['ls', '/usr/bin/mercator'])
 
+
 @when('Scanning the jar file')
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_JAR], env=dict(os.environ, MERCATOR_JAVA_RESOLVE_POMS="true")).decode('utf-8')
     context.ecosystem = 'java'
 
+
 @when('Scanning the package.json file')
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_PACKAGE_JSON]).decode('utf-8')
     context.ecosystem = 'javascript'
+
 
 @when('Scanning the setup.py file')
 def get_scan_info(context):
@@ -61,20 +66,24 @@ def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_SETUP_PY]).decode('utf-8')
     context.ecosystem = 'python'
 
+
 @when('Scanning the dll file')
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_DOTNET]).decode('utf-8')
     context.ecosystem = 'dotnet'
+
 
 @when('Scanning the gemspec file')
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_RUBY]).decode('utf-8')
     context.ecosystem = 'ruby'
 
+
 @when('Scanning the Cargo.toml file')
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_RUST]).decode('utf-8')
     context.ecosystem = 'rustcargo'
+
 
 @then('We have correct output')
 def check_scan_info(context):
