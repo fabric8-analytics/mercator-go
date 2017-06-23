@@ -11,21 +11,21 @@ rm -rf "${RPMBUILD_ROOT}"/*
 
 # Work in the root of GIT
 (
-	cd ..
+    cd ..
 
-	git archive --prefix="mercator/" -o "mercator-go-${MERCATOR_VERSION}.tar.gz" HEAD
-	# TODO: Pinned specific version because github repo is private
-	curl https://raw.githubusercontent.com/fabric8-analytics/worker/master/cucoslib/data_normalizer.py?token=APPXcH3SGOqOQje3nRuy8fHyNB0AaoNXks5Y9HVdwA%3D%3D -o data_normalizer.py
-	# we need to build java handler as RPM build fails in copr for EPEL-6
-        make -C handlers/java_handler
-	
+    # build java handler now, because RPM build fails in copr for EPEL-6
+    make build JAVA=YES DOTNET=YES RUST=NO
+    cp mercator "${SOURCES_ROOT}/"
+    cp handlers/java "${SOURCES_ROOT}/"
+    cp handlers/dotnet "${SOURCES_ROOT}/"
+    cp handlers.yml "${SOURCES_ROOT}/"
 
-	cp "mercator-go-${MERCATOR_VERSION}.tar.gz" "${SOURCES_ROOT}/mercator-go.tar.gz"
-	cp mercator "${SOURCES_ROOT}/"
-	cp handlers/java "${SOURCES_ROOT}/"
-	cp dist/handlers_template.yml "${SOURCES_ROOT}/"
+    git archive --prefix="mercator/" -o "mercator-go-${MERCATOR_VERSION}.tar.gz" HEAD
+    cp "mercator-go-${MERCATOR_VERSION}.tar.gz" "${SOURCES_ROOT}/mercator-go.tar.gz"
 
-	cp data_normalizer.py "${SOURCES_ROOT}"
-	rpmbuild -bs dist/mercator-go-for-openshift.spec
+    curl https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-worker/master/f8a_worker/data_normalizer.py -o data_normalizer.py
+    cp data_normalizer.py "${SOURCES_ROOT}"
+
+    rpmbuild -bs dist/mercator.spec
 )
 

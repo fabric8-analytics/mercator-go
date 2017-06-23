@@ -1,23 +1,41 @@
 # golang does not generate debug info
 %define debug_package %{nil}
 
-Name:		mercator
-Version:	1
-Release:	16%{?dist}
-Summary:	Mercator CLI tool
-License:	ASL 2.0
-URL:		https://github.com/fabric8-analytics/%{name}-go
+Name:       mercator
+Version:    1
+Release:    17%{?dist}
+Summary:    Mercator CLI tool
+License:    ASL 2.0
+URL:        https://github.com/fabric8-analytics/%{name}-go
 
-Source0:	%{name}-go.tar.gz
-# prebuild binary
-Source1: %{name}
+Source0:    %{name}-go.tar.gz
+
+# pre-built binary & handlers
+Source1:    %{name}
+Source2:    handlers.yml
+Source3:    java
+Source4:    dotnet
+
 # data normalizer source code
-Source2: data_normalizer.py
-Source3: java
-Source4: handlers_template.yml
+Source5:    data_normalizer.py
 
-BuildRequires:	make
-#Requires:	java-devel maven
+BuildRequires:  make
+
+# python handler
+%if 0%{?rhel}
+Requires:       python34
+%else
+Requires:       python3
+%endif
+# ruby handler
+Requires:       ruby
+# npm handler
+Requires:       nodejs
+# java handler
+Requires:       java maven
+# dotnet handler
+Requires:       mono-core
+
 
 %description
 Mercator obtains manifests from various ecosystems such as NPM, .NET, Java and Python
@@ -26,22 +44,21 @@ Mercator obtains manifests from various ecosystems such as NPM, .NET, Java and P
 %setup -q -n mercator
 
 %build
+# Assume everything has already been built prior to this stage.
 
 %install
-# Place pre-build binary to the context
-cp %{SOURCE1} .
-# Cannot build with Java 1.7 under Epel-6, place prebuild JAR file there
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/share/%{name}
-cp %{SOURCE3} $RPM_BUILD_ROOT%{_prefix}/share/%{name}
-make handlers JAVA=NO DOTNET=NO RUST=NO HANDLERS_TEMPLATE=%{SOURCE4}
-make install DESTDIR=$RPM_BUILD_ROOT%{_prefix}
+# Place pre-built binary & handlers
+cp %{SOURCE1} %{SOURCE2} .
+cp %{SOURCE3} %{SOURCE4} handlers/
+
+make install DESTDIR=%{buildroot}%{_prefix}
 
 # copy data normalizer to paths
-cp %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/%{name}
+cp %{SOURCE5} %{buildroot}%{_datadir}/%{name}
 
 # create script for normalized output
 # it's hack, need to rework from scratch
-cat << EOF > $RPM_BUILD_ROOT%{_prefix}/bin/run_mercator
+cat << EOF > %{buildroot}%{_prefix}/bin/run_mercator
 #!/bin/bash
 # enable scl
 # this is due to python handler
@@ -53,7 +70,7 @@ source /opt/rh/ruby200/enable
 mercator \$1 | python3 %{_datadir}/%{name}/data_normalizer.py --restricted
 EOF
 
-chmod +x $RPM_BUILD_ROOT%{_prefix}/bin/run_mercator
+chmod +x %{buildroot}%{_prefix}/bin/run_mercator
 
 %clean
 
@@ -62,9 +79,15 @@ chmod +x $RPM_BUILD_ROOT%{_prefix}/bin/run_mercator
 %{_bindir}/%{name}
 %{_bindir}/run_%{name}
 
-%doc
+%{!?_licensedir:%global license %%doc}
+%{license} LICENSE
+%doc README.md
+
 
 %changelog
+* Fri Jun 23 2017 Jiri Popelka <jpopelka@redhat.com> - 1-17
+- dotnet handler
+
 * Fri Apr 28 2017 Jiri Popelka <jpopelka@redhat.com> - 1-16
 - Add License and change URL
 
