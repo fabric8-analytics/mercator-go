@@ -3,81 +3,59 @@
 
 Name:       mercator
 Version:    1
-Release:    17%{?dist}
+Release:    18%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
 
-Source0:    %{name}-go.tar.gz
+Source0:    %{name}.tar.gz
 
-# pre-built binary & handlers
-Source1:    %{name}
-Source2:    handlers.yml
-Source3:    java
-Source4:    dotnet
-
-# data normalizer source code
-Source5:    data_normalizer.py
-
-BuildRequires:  make
+BuildRequires:  make openssl-devel golang git
 
 # python handler
 %if 0%{?rhel}
+BuildRequires:  python34-devel
 Requires:       python34
 %else
+BuildRequires:  python3-devel
 Requires:       python3
 %endif
+
 # ruby handler
 Requires:       ruby
+
 # npm handler
 Requires:       nodejs
+
 # java handler
+BuildRequires:  java-devel maven
 Requires:       java maven
+
 # dotnet handler
+BuildRequires:  mono-devel nuget
 Requires:       mono-core
 
 
 %description
-Mercator obtains manifests from various ecosystems such as NPM, .NET, Java and Python
+Obtains manifests from various ecosystems such as NPM, .NET, Java and Python
 
 %prep
-%setup -q -n mercator
+%setup -q -n %{name}
 
 %build
-# Assume everything has already been built prior to this stage.
+yes | certmgr -ssl https://go.microsoft.com
+yes | certmgr -ssl https://nuget.org
+export GOPATH=/tmp
+make build JAVA=YES DOTNET=YES RUST=NO
 
 %install
-# Place pre-built binary & handlers
-cp %{SOURCE1} %{SOURCE2} .
-cp %{SOURCE3} %{SOURCE4} handlers/
-
 make install DESTDIR=%{buildroot}%{_prefix}
-
-# copy data normalizer to paths
-cp %{SOURCE5} %{buildroot}%{_datadir}/%{name}
-
-# create script for normalized output
-# it's hack, need to rework from scratch
-cat << EOF > %{buildroot}%{_prefix}/bin/run_mercator
-#!/bin/bash
-# enable scl
-# this is due to python handler
-#source /opt/rh/python27/enable
-source /opt/rh/python33/enable
-# this is for ruby handler
-source /opt/rh/ruby200/enable
-# run scan
-mercator \$1 | python3 %{_datadir}/%{name}/data_normalizer.py --restricted
-EOF
-
-chmod +x %{buildroot}%{_prefix}/bin/run_mercator
 
 %clean
 
 %files
 %{_datadir}/%{name}/*
 %{_bindir}/%{name}
-%{_bindir}/run_%{name}
 
 %{!?_licensedir:%global license %%doc}
 %{license} LICENSE
@@ -85,6 +63,9 @@ chmod +x %{buildroot}%{_prefix}/bin/run_mercator
 
 
 %changelog
+* Tue Jun 27 2017 Jiri Popelka <jpopelka@redhat.com> - 1-18
+- remove Openshift V2 & EPEL-6 hacks
+
 * Fri Jun 23 2017 Jiri Popelka <jpopelka@redhat.com> - 1-17
 - dotnet handler
 

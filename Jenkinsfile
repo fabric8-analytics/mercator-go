@@ -17,7 +17,7 @@ node('docker') {
 
     if (env.BRANCH_NAME == 'master') {
         stage('make') {
-            sh "cd dist; ./build-for-openshift.sh"
+            sh "./make_rpm.sh --source"
         }
         stage('push to copr') {
             sh "copr-cli build jpopelka/mercator ~/rpmbuild/SRPMS/mercator-*.src.rpm"

@@ -38,7 +38,7 @@ python3
 Javascript:  
 
 ```
-npm
+nodejs
 ```
 
 Dotnet:  
@@ -50,12 +50,12 @@ mono-devel nuget
 for Dotnet you have to execute this command first:
 
 ```
-yes | certmgr -ssl -m https://go.microsoft.com && yes | certmgr -ss    l -m https://nuget.org
+yes | certmgr -ssl https://go.microsoft.com && yes | certmgr -ssl https://nuget.org
 ```
 
 All handler dependencies together:  
 ```
-ruby java-devel python3 npm mono-devel nuget
+ruby java-devel python3 nodejs mono-devel nuget
 ```
 
 Note: the `which` package is required because of [bug 1396395](https://bugzilla.redhat.com/show_bug.cgi?id=1396395); when this is fixed, it can be safely removed.
