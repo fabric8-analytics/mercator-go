@@ -28,6 +28,7 @@ namespace MercatorDotNet.App.Providers
             {
                 // Now try to load without schema validation
                 // TODO: Note the fact that the manifest failed schema validation in the returned metadata
+                stream.Seek(0, SeekOrigin.Begin);
                 Manifest m2 = Manifest.ReadFrom(stream, false);
                 return m2;
             }
