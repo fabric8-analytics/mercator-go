@@ -49,9 +49,27 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="NuGet.Core">
-      <HintPath>..\packages\NuGet.Core.2.12.0\lib\net40-Client\NuGet.Core.dll</HintPath>
+      <HintPath>..\packages\NuGet.Core.2.14.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-  </ItemGroup>
+    <Reference Include="NuGet.Common">
+      <HintPath>..\packages\NuGet.Common.4.0.0\lib\net45\NuGet.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Frameworks">
+      <HintPath>..\packages\NuGet.Frameworks.4.0.0\lib\net45\NuGet.Frameworks.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Packaging">
+      <HintPath>..\packages\NuGet.Packaging.4.0.0\lib\net45\NuGet.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Packaging.Core">
+      <HintPath>..\packages\NuGet.Packaging.Core.4.0.0\lib\net45\NuGet.Packaging.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Packaging.Core.Types">
+      <HintPath>..\packages\NuGet.Packaging.Core.Types.4.0.0\lib\net45\NuGet.Packaging.Core.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Versioning">
+      <HintPath>..\packages\NuGet.Versioning.4.0.0\lib\net45\NuGet.Versioning.dll</HintPath>
+    </Reference>
+    </ItemGroup>
   <ItemGroup>
     <Compile Include="App\Descriptors\AssemblyDllMetadataDescriptor.cs" />
     <Compile Include="App\Descriptors\AssemblyInfoMetadataDescriptor.cs" />
@@ -90,6 +108,12 @@
     <EmbeddedResource Include="Resources\Microsoft.Web.XmlTransform.dll" />
     <EmbeddedResource Include="packages.config" />
     <EmbeddedResource Include="Resources\NuGet.Core.dll" />
+    <EmbeddedResource Include="Resources\NuGet.Common.dll" />
+    <EmbeddedResource Include="Resources\NuGet.Frameworks.dll" />
+    <EmbeddedResource Include="Resources\NuGet.Packaging.dll" />
+    <EmbeddedResource Include="Resources\NuGet.Packaging.Core.dll" />
+    <EmbeddedResource Include="Resources\NuGet.Packaging.Core.Types.dll" />
+    <EmbeddedResource Include="Resources\NuGet.Versioning.dll" />
     <EmbeddedResource Include="Resources\Onion.SolutionParser.Parser.dll" />
     <EmbeddedResource Include="Resources\Newtonsoft.Json.dll" />
   </ItemGroup>
@@ -101,6 +125,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\NuGet.Core.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\NuGet.Common.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\NuGet.Frameworks.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\NuGet.Packaging.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\NuGet.Packaging.Core.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\NuGet.Packaging.Core.Types.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\NuGet.Versioning.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\Onion.SolutionParser.Parser.dll" />
