@@ -25,6 +25,7 @@ all:
 	$(MAKE) stage
 	xbuild
 	cp -f MercatorDotNet/bin/Debug/MercatorDotNet.exe ../dotnet
+	chmod -x ../dotnet
 	$(MAKE) clean
 
 stage:

@@ -55,8 +55,11 @@ build: handlers
 install:
 	mkdir -p ${DESTDIR}/bin ${HANDLERSDIR}
 	cp ${NAME} ${DESTDIR}/bin/${NAME}
-	cp -rf handlers/* ${HANDLERSDIR}
 	cp handlers.yml ${HANDLERSDIR}
+	cp -f handlers/* ${HANDLERSDIR} || :
+	# bundled python pkginfo module
+	cp -rf handlers/pkginfo/ ${HANDLERSDIR}
+
 
 clean:
 	rm -rf ${HANDLERSDIR}
