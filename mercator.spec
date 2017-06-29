@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    18%{?dist}
+Release:    19%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -63,6 +63,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Thu Jun 29 2017 Jiri Popelka <jpopelka@redhat.com> - 1-19
+- [dotnet handler] Use NuGet v4 library for nuspec reading
+
 * Tue Jun 27 2017 Jiri Popelka <jpopelka@redhat.com> - 1-18
 - remove Openshift V2 & EPEL-6 hacks
 
