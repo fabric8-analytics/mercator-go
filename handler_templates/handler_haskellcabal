@@ -1,0 +1,7 @@
+  - name: "HaskellCabal"
+    description: "A Haskell Cabal package for Hackage"
+    handler: "haskell"
+    filepatterns:
+     - "^.*\\.cabal$"
+    lockfile:
+     - "^cabal\\.config$"

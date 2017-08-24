@@ -13,13 +13,15 @@ SCANNED_SETUP_PY = 'fixtures/python'
 SCANNED_RUBY = 'fixtures/ruby'
 SCANNED_DOTNET = 'fixtures/dotnet'
 SCANNED_RUST = 'fixtures/rust'
+SCANNED_HASKELL = 'fixtures/haskell'
 
 result_dict = {'javascript': javascript_result,
                'java': java_result,
                'ruby': ruby_result,
                'dotnet': dotnet_result,
                'python': python_result,
-               'rustcargo': rust_result
+               'rustcargo': rust_result,
+               'haskell': haskell_result
                }
 
 
@@ -83,6 +85,12 @@ def get_scan_info(context):
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_RUST]).decode('utf-8')
     context.ecosystem = 'rustcargo'
+
+
+@when('Scanning the Cabal file')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_HASKELL]).decode('utf-8')
+    context.ecosystem = 'haskell'
 
 
 @then('We have correct output')
