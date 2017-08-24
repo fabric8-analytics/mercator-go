@@ -18,6 +18,7 @@ HANDLERS_TEMPLATE=handler_templates/handlers_template.yml
 DOTNET=NO
 RUST=NO
 JAVA=YES
+HASKELL=NO
 
 all:
 	$(MAKE) clean
@@ -42,6 +43,11 @@ handlers:
 		pushd ./handlers/rust_handler && $(MAKE) all; \
 		popd; \
 		cat handler_templates/handler_rustcrate >> handlers.yml; \
+	fi
+	@if [ "$(HASKELL)" == "YES" ]; then \
+		pushd ./handlers/haskell_handler && $(MAKE) all; \
+		popd; \
+		cat handler_templates/handler_haskellcabal >> handlers.yml; \
 	fi
 
 build: handlers
