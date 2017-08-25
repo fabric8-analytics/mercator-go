@@ -1,7 +1,22 @@
 Mercator 2.0
 ============
 
-This is a 2.0 version of Mercator tool, rewritten from Python to Go
+Mercator is a Swiss army knife for obtaining package metadata across various package ecosystems:
+
+| Language | Ecosystem |
+|----------|-----------|
+| Python | PyPI |
+| Ruby | Gems |
+| Node | NPM |
+| Java | Maven |
+| Rust | Cargo |
+| .NET | Nuget |
+| Haskell | Hackage |
+
+Simply point Mercator at some directory and it will walk down all child directories and collect information
+about all encountered package manifests. The output is always a JSON document describing what has been
+found, please note that the key/value layout of the JSON document depends on the package ecosystem
+that produced it, so if you want to do some further processing or analytics you may want to [normalize the data](https://github.com/fabric8-analytics/fabric8-analytics-worker/blob/master/f8a_worker/data_normalizer.py).
 
 ## Contributing
 
