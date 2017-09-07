@@ -46,11 +46,7 @@ public class MercatorJava {
         try {
             if ((new File(args[0])).getName().equals("pom.xml")) {
                 // POM
-                if (true) {
-                    result = handlePomFile(args[0]).toString();
-                } else {
-                    result = "{\"error\": \"Processing of pom.xml files is not enabled.\"}";
-                }
+                result = handlePomFile(args[0]).toString();
             } else {
                 // JAR
                 try (InputStream is = new BufferedInputStream(new FileInputStream(args[0]))) {
