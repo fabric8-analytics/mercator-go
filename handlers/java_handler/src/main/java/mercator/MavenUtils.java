@@ -16,11 +16,7 @@ package mercator;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
@@ -41,7 +37,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class MavenUtils {
-    
+
     private MavenUtils() {
     }
 
@@ -141,8 +137,20 @@ public class MavenUtils {
                 type = e.getElementsByTagName("type").item(0).getTextContent();
             }
             NodeList scopes = e.getElementsByTagName("scope");
-            for (int j = 0; j < scopes.getLength(); j++) {
-                String scopeName = scopes.item(j).getTextContent();
+
+            Set<String> dependencyScopes = new HashSet<>();
+
+            if(scopes.getLength() == 0) {
+                String scopeName = "compile";
+                System.err.println(String.format("Defaulting to scope: %s", scopeName));
+                dependencyScopes.add(scopeName);
+            } else {
+                for (int j = 0; j < scopes.getLength(); j++) {
+                    dependencyScopes.add(scopes.item(j).getTextContent());
+                }
+            }
+
+            for (String scopeName: dependencyScopes) {
                 if (!depMap.containsKey(scopeName)) {
                     depMap.put(scopeName, new HashMap<String, Map>());
                 }
