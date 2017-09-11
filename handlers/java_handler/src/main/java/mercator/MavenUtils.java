@@ -16,11 +16,7 @@ package mercator;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
@@ -41,18 +37,20 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class MavenUtils {
-    
+
     private MavenUtils() {
     }
 
     public static Document getParsedExpandedPom(File pomFile) {
         // TODO: improve error handling/error reporting
-        Document parsedPom = null;
+
+        System.err.println(String.format("Attempting expansion of POM: %s", pomFile));
+
         File resolvedPom;
         try {
             resolvedPom = File.createTempFile("resolvedpom", ".xml");
         } catch (java.io.IOException ex) {
-            return parsedPom;
+            return null;
         }
         resolvedPom.deleteOnExit();
         InvocationRequest request = new DefaultInvocationRequest();
@@ -62,7 +60,7 @@ public class MavenUtils {
             tempRepoDir = Files.createTempDirectory(null).toFile();
             request.setLocalRepositoryDirectory(tempRepoDir);
         } catch (java.io.IOException ex) {
-            return parsedPom;
+            return null;
         }
         // FIXME: "-q" is a hack as support for the option is currently missing in maven-invoker
         request.setGoals(Collections.singletonList("org.apache.maven.plugins:maven-help-plugin:2.2:effective-pom -q"));
@@ -81,25 +79,29 @@ public class MavenUtils {
             // unfortunately we have to call this both if invoker.execute runs fine and when it raises;
             //   even if it raises, it still might have downloaded something
             recursiveDeleteOnExit(tempRepoDir);
-            return parsedPom;
+            return null;
         }
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db;
-        try {
-            db = dbf.newDocumentBuilder();
-        } catch (javax.xml.parsers.ParserConfigurationException ex) {
-            return parsedPom;
-        }
-        try {
-            parsedPom = db.parse(resolvedPom);
-        } catch (org.xml.sax.SAXException ex) {
-            return parsedPom;
-        } catch (java.io.IOException ex) {
-            return parsedPom;
-        }
-
+        Document parsedPom = readFileAsDocument(resolvedPom);
         return parsedPom;
+    }
+
+    public static  Document readFileAsDocument(File inputFile) {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder;
+        try {
+            docBuilder = dbf.newDocumentBuilder();
+            return docBuilder.parse(inputFile);
+        } catch (javax.xml.parsers.ParserConfigurationException ex) {
+            ex.printStackTrace();
+            return null;
+        } catch (org.xml.sax.SAXException ex) {
+            ex.printStackTrace();
+            return null;
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     public static Map<String, Map> getPomXmlDependencies(Document parsedPom) {
@@ -111,14 +113,22 @@ public class MavenUtils {
         try {
             xpe = xpath.compile("/project/dependencies/dependency");
             dependencies = (NodeList) xpe.evaluate(parsedPom, XPathConstants.NODESET);
+            System.err.println( String.format("Dependencies: %s", dependencies));
         } catch (javax.xml.xpath.XPathExpressionException ex) {
+            ex.printStackTrace();
             return depMap;
         }
         for (int i = 0; i < dependencies.getLength(); i++) {
             Element e = (Element) dependencies.item(i);
+            System.err.println( String.format("Element: %s", e));
             String groupId = e.getElementsByTagName("groupId").item(0).getTextContent();
             String artifactId = e.getElementsByTagName("artifactId").item(0).getTextContent();
-            String version = e.getElementsByTagName("version").item(0).getTextContent();
+
+            NodeList versions = e.getElementsByTagName("version");
+            String version = "";
+            if(versions.getLength() > 0) {
+                version = versions.item(0).getTextContent();
+            }
             String classifier = "", type = "";
             if (e.getElementsByTagName("classifier").getLength() > 0) {
                 classifier = e.getElementsByTagName("classifier").item(0).getTextContent();
@@ -127,8 +137,20 @@ public class MavenUtils {
                 type = e.getElementsByTagName("type").item(0).getTextContent();
             }
             NodeList scopes = e.getElementsByTagName("scope");
-            for (int j = 0; j < scopes.getLength(); j++) {
-                String scopeName = scopes.item(j).getTextContent();
+
+            Set<String> dependencyScopes = new HashSet<>();
+
+            if(scopes.getLength() == 0) {
+                String scopeName = "compile";
+                System.err.println(String.format("Defaulting to scope: %s", scopeName));
+                dependencyScopes.add(scopeName);
+            } else {
+                for (int j = 0; j < scopes.getLength(); j++) {
+                    dependencyScopes.add(scopes.item(j).getTextContent());
+                }
+            }
+
+            for (String scopeName: dependencyScopes) {
                 if (!depMap.containsKey(scopeName)) {
                     depMap.put(scopeName, new HashMap<String, Map>());
                 }
@@ -140,17 +162,33 @@ public class MavenUtils {
         return depMap;
     }
 
+    public static boolean resolvePomsEnabled() {
+        return Boolean.parseBoolean(System.getenv("MERCATOR_JAVA_RESOLVE_POMS"));
+    }
+
     public static Map<String, Map> getPomXmlEntries(File pomFile) {
         // TODO: improve error handling/error reporting
-        Document parsedPom = getParsedExpandedPom(pomFile);
+
+        System.err.println(String.format("Processing file: %s", pomFile));
+        Document parsedPom;
+
+        if(resolvePomsEnabled()) {
+            System.err.println("NOTICE: Resolving POMs is enabled.");
+            parsedPom = getParsedExpandedPom(pomFile);
+        } else {
+            parsedPom = readFileAsDocument(pomFile);
+        }
+
         Map<String, Map> result = new HashMap<String, Map>();
-        XPathFactory xpf = XPathFactory.newInstance();
-        XPath xpath = xpf.newXPath();
-        XPathExpression xpe = null;
 
         if (parsedPom == null) {
             return result;
         }
+
+        XPathFactory xpf = XPathFactory.newInstance();
+        XPath xpath = xpf.newXPath();
+        XPathExpression xpe = null;
+
 
         result.put("pom.xml", new HashMap<String, Map>());
 

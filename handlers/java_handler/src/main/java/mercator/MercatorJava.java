@@ -46,11 +46,7 @@ public class MercatorJava {
         try {
             if ((new File(args[0])).getName().equals("pom.xml")) {
                 // POM
-                if (resolvePomsEnabled()) {
-                    result = handlePomFile(args[0]).toString();
-                } else {
-                    result = "{\"error\": \"Processing of pom.xml files is not enabled.\"}";
-                }
+                result = handlePomFile(args[0]).toString();
             } else {
                 // JAR
                 try (InputStream is = new BufferedInputStream(new FileInputStream(args[0]))) {
@@ -62,6 +58,7 @@ public class MercatorJava {
                 }
             }
         } catch (Throwable e) {
+            e.printStackTrace();
             result = "{\"error\": \"Error processing the input file: " + e.getMessage() + "\"}";
             retcode = 1;
         }
@@ -106,7 +103,7 @@ public class MercatorJava {
                 continue;
             }
 
-            if (resolvePomsEnabled()) {
+            if (MavenUtils.resolvePomsEnabled()) {
                 String result_key = "pom.xml";
                 // fetch data from pom.xml
                 if (MavenUtils.isPomXml(entry)) {
@@ -148,10 +145,6 @@ public class MercatorJava {
     private static JSONObject handlePomFile(String pomPath) {
         JSONObject output = new JSONObject(MavenUtils.getPomXmlEntries(new File(pomPath)));
         return output;
-    }
-
-    private static boolean resolvePomsEnabled() {
-        return Boolean.parseBoolean(System.getenv("MERCATOR_JAVA_RESOLVE_POMS"));
     }
 
     private static String getJarKind(String name) {
