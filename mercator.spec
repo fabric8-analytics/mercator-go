@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    19%{?dist}
+Release:    20%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -63,6 +63,10 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Tue Sep 12 2017 Jiri Popelka <jpopelka@redhat.com> - 1-20
+- Haskell handler
+- effective pom files handling
+
 * Thu Jun 29 2017 Jiri Popelka <jpopelka@redhat.com> - 1-19
 - [dotnet handler] Use NuGet v4 library for nuspec reading
 
