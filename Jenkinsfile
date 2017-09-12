@@ -17,6 +17,7 @@ node('docker') {
 
     if (env.BRANCH_NAME == 'master') {
         stage('make') {
+            sh "rm -f ~/rpmbuild/SRPMS/mercator-*.src.rpm"
             sh "./make_rpm.sh --source"
         }
         stage('push to copr') {
