@@ -74,6 +74,10 @@ def _handle_develop(fpath):
                 'Author: ', 'Author-email: ', 'Description: ', 'Classifier: ', 'Platform: ',
                 'Download-URL: ', 'Keywords: ')
 
+    def _is_trigger_on_line(line):
+        "Return true for trigger lines"
+        return ':' in line and not line.startswith(' ')
+
     def _get_trigger_on_line(line):
         "Return name of the trigger or None"
         for trigger in triggers:
@@ -131,19 +135,24 @@ def _handle_develop(fpath):
     """ Some notes about the format and how the parser below works:
         * Lines either start with a well defined 'trigger' or are appended to the last seen trigger
           * Well defined means that it's listed in `triggers` list
+          * unknown 'triggers' are ignored, they can span multiple lines
         * The trove classifiers are all collated into a single key 'classifiers'
     """
     with open(fpath, mode='r', encoding='utf-8') as f:
         for line in f.readlines():
-            trigger = _get_trigger_on_line(line)
-            if trigger:
+
+            if _is_trigger_on_line(line):
                 # we've seen a trigger and now we see another trigger
                 # so put the old one into the dictionary
                 if p:
                     _store_value(properties, p, data)
                     p = None
-                sc = trigger.index(':')
-                p, data = trigger[:sc].lower(), line[sc+2:].strip()
+
+                trigger = _get_trigger_on_line(line)
+                # only known triggers are worth remembering
+                if trigger:
+                    sc = trigger.index(':')
+                    p, data = trigger[:sc].lower(), line[sc+2:].strip()
             else:
                 if p:
                     if data:
@@ -152,6 +161,7 @@ def _handle_develop(fpath):
                         data = None
                     # if there was a trigger on previous line, append to it
                     _store_value(properties, p, line.strip())
+
 
     if p and data:
         # flush out the last remaining

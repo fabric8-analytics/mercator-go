@@ -10,6 +10,7 @@ from results import *
 SCANNED_JAR = 'fixtures/java-jar'
 SCANNED_PACKAGE_JSON = 'fixtures/javascript'
 SCANNED_SETUP_PY = 'fixtures/python'
+SCANNED_PKGINFO = 'fixtures/python-dist'
 SCANNED_RUBY = 'fixtures/ruby'
 SCANNED_DOTNET = 'fixtures/dotnet'
 SCANNED_RUST = 'fixtures/rust'
@@ -20,6 +21,7 @@ result_dict = {'javascript': javascript_result,
                'ruby': ruby_result,
                'dotnet': dotnet_result,
                'python': python_result,
+               'python-dist': python_dist_result,
                'rustcargo': rust_result,
                'haskell': haskell_result
                }
@@ -67,6 +69,12 @@ def get_scan_info(context):
     os.environ["MERCATOR_INTERPRET_SETUP_PY"] = "true"
     context.out = subprocess.check_output(['mercator', SCANNED_SETUP_PY]).decode('utf-8')
     context.ecosystem = 'python'
+
+
+@when('Scanning the PKGINFO file')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_PKGINFO]).decode('utf-8')
+    context.ecosystem = 'python-dist'
 
 
 @when('Scanning the dll file')
