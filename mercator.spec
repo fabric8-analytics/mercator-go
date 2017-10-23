@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    20%{?dist}
+Release:    21%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -63,6 +63,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Mon Oct 23 2017 Michal Srb <michal@redhat.com> - 1-21
+- Ignore unknown trigger lines in PKGINFO
+
 * Tue Sep 12 2017 Jiri Popelka <jpopelka@redhat.com> - 1-20
 - Haskell handler
 - effective pom files handling
