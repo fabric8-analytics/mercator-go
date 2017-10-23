@@ -64,6 +64,18 @@ python_result = {'digests': {'manifest': '9503dba97ea4fccebc9f942868fadf4d2c16ea
                             'packages': ['distutils', 'distutils.command'], 'author': 'Greg Ward',
                             'author_email': 'gward@python.net',
                             'version': '1.0', 'name': 'Distutils'}}
+python_dist_result = {'digests': {'manifest': '57bfd357c24e73b60f6e72a4a9968f33be16126c'}, 'ecosystem': 'Python-Dist',
+                      'result': {"author": "Ansible, Inc.",
+                                 "author-email": "info@ansible.com",
+                                 "classifier": "Development Status :: 5 - Production/Stable\nEnvironment :: Console",
+                                 "description": "text\nmore text",
+                                 "home-page": "https://ansible.com/",
+                                 "license": "GPLv3+",
+                                 "name": "ansible",
+                                 "platform": "UNKNOWN",
+                                 "summary": "Radically simple IT automation",
+                                 "version": "2.4.0.0"
+                      }}
 rust_result = {'result': {'repository': None, 'readme': None, 'authors': ['Pavel Odvody <podvody@redhat.com>'], 'homepage': None, 'keywords': [], 'description': None, 'documentation': None, 'license': None, 'license_file': None, 'package': {'source': None, 'manifest_path': '/mercator-go/tests/fixtures/rust/Cargo.toml', 'features': {}, 'dependencies': [{'uses_default_features': True, 'req': '^0.3.19', 'source': 'registry+https://github.com/rust-lang/crates.io-index', 'features': [], 'optional': False, 'kind': None, 'target': None, 'name': 'rustc-serialize'}, {'uses_default_features': True, 'req': '^0.13.0', 'source': 'registry+https://github.com/rust-lang/crates.io-index', 'features': [], 'optional': False, 'kind': None, 'target': None, 'name': 'cargo'}], 'targets': [{'src_path': '/mercator-go/tests/fixtures/rust/src/main.rs', 'kind': ['bin'], 'name': 'mercator-rust-handler'}], 'id': 'mercator-rust-handler 0.0.1 (path+file:///mercator-go/tests/fixtures/rust)', 'version': '0.0.1', 'name': 'mercator-rust-handler'}}, 'ecosystem': 'RustCrate', 'digests': {'manifest': 'c943ee4a308e49c29208a75d06bd771d7dc5c7ea'}}
 
 haskell_result = {"digests": {"manifest": "2e8aabfd637644ae498235cf02c2890c319846e3" },"ecosystem": "HaskellCabal","result": {"mdLicense":"MIT","mdHomePage":"","mdDependencies":["base >=4.6.0","Cabal >=1.16.0","aeson >=1.2.1.0","filepath >=1.3.0.1","directory >=1.2.7.1","text >=1.2.2.2"],"mdIssueUrl":"","mdName":"mercator-hs","mdCategory":"Data","mdAuthor":"Pavel Odvody","mdCopyright":"Pavel Odvody 2017","mdDescription":"Haskell package manifest handler for Mercator","mdMaintainer":"podvody@redhat.com","mdRepos":[{"rpType":"git","rpName":"master","rpURL":"git://github.com/shaded-enmity/mercator-hs"}],"mdLockedDeps":[]}}

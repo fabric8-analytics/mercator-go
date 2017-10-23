@@ -1,0 +1,16 @@
+Metadata-Version: 1.1
+Name: ansible
+Version: 2.4.0.0
+Summary: Radically simple IT automation
+Home-page: https://ansible.com/
+Author: Ansible, Inc.
+Author-email: info@ansible.com
+License: GPLv3+
+Unknown-Key: Ignore
+Description-Content-Type: UNKNOWN
+    unknown trigger - ignore
+Description: text
+    more text
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Platform: UNKNOWN
