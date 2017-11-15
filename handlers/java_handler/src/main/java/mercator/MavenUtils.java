@@ -22,10 +22,7 @@ import java.util.zip.ZipEntry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
@@ -166,17 +163,37 @@ public class MavenUtils {
         return Boolean.parseBoolean(System.getenv("MERCATOR_JAVA_RESOLVE_POMS"));
     }
 
+    private static Boolean ignoreDescription(Document pomDocument)  {
+        XPathFactory xpf = XPathFactory.newInstance();
+        XPath xpath = xpf.newXPath();
+        XPathExpression xpe = null;
+        Node nd = null;
+
+        try {
+            xpe = xpath.compile("/project/description");
+            nd = (Node) xpe.evaluate(pomDocument, XPathConstants.NODE);
+        } catch (javax.xml.xpath.XPathExpressionException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (nd == null) {
+            return true;
+        }
+        return false;
+    }
+
     public static Map<String, Map> getPomXmlEntries(File pomFile) {
         // TODO: improve error handling/error reporting
 
         System.err.println(String.format("Processing file: %s", pomFile));
-        Document parsedPom;
+        Document parsedPom = readFileAsDocument(pomFile);
+        Boolean ignoreDescription = ignoreDescription(parsedPom);
 
         if(resolvePomsEnabled()) {
             System.err.println("NOTICE: Resolving POMs is enabled.");
+
             parsedPom = getParsedExpandedPom(pomFile);
-        } else {
-            parsedPom = readFileAsDocument(pomFile);
         }
 
         Map<String, Map> result = new HashMap<String, Map>();
@@ -216,18 +233,21 @@ public class MavenUtils {
         } catch (javax.xml.xpath.XPathExpressionException ex) {}
 
         // get other metadata
-        String[] keys = {"groupId", "artifactId", "version", "name", "description", "url"};
+        List<String> keys = new ArrayList<>(Arrays.asList("groupId", "artifactId", "version", "name", "url"));
+        if (!ignoreDescription) {
+            keys.add("description");
+        }
         Node nd = null;
-        for (int i = 0; i < keys.length; i++) {
+        for (String key : keys) {
             try {
-                xpe = xpath.compile(String.format("/project/%s[1]", keys[i]));
+                xpe = xpath.compile(String.format("/project/%s[1]", key));
                 nd = (Node) xpe.evaluate(parsedPom, XPathConstants.NODE);
             } catch (javax.xml.xpath.XPathExpressionException ex) {
                 return result;
             }
 
             if (nd != null) {
-                result.get("pom.xml").put(keys[i], nd.getTextContent());
+                result.get("pom.xml").put(key, nd.getTextContent());
             }
         }
         return result;
