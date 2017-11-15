@@ -167,18 +167,16 @@ public class MavenUtils {
         XPathFactory xpf = XPathFactory.newInstance();
         XPath xpath = xpf.newXPath();
         XPathExpression xpe = null;
+        Node nd = null;
 
         try {
             xpe = xpath.compile("/project/description");
-        } catch (javax.xml.xpath.XPathExpressionException e) {
-            e.printStackTrace();
-        }
-        Node nd = null;
-        try {
             nd = (Node) xpe.evaluate(pomDocument, XPathConstants.NODE);
         } catch (javax.xml.xpath.XPathExpressionException e) {
             e.printStackTrace();
+            return false;
         }
+
         if (nd == null) {
             return true;
         }
