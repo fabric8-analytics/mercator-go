@@ -11,9 +11,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Mercator. If not, see <http://www.gnu.org/licenses/>.
 #
-NAME=mercator
+BIN_NAME=mercator
 DESTDIR=/usr
-HANDLERSDIR=${DESTDIR}/share/${NAME}
+HANDLERSDIR=${DESTDIR}/share/${BIN_NAME}
 HANDLERS_TEMPLATE=handler_templates/handlers_template.yml
 DOTNET=NO
 RUST=NO
@@ -52,25 +52,23 @@ handlers:
 
 build: handlers
 	go get 'gopkg.in/yaml.v2'
-	rm -f ${GOPATH}/src/github.com/shaded-enmity/mercator
-	mkdir -p ${GOPATH}/src/github.com/shaded-enmity/
-	ln -s `pwd` ${GOPATH}/src/github.com/shaded-enmity/mercator
-	go build -o ${NAME}
-	rm -f ${GOPATH}/src/github.com/shaded-enmity/mercator
+	mkdir -p ${GOPATH}/src/github.com/fabric8-analytics/
+	ln -f -s `pwd` ${GOPATH}/src/github.com/fabric8-analytics/mercator-go
+	go build -o ${BIN_NAME}
+	rm -f ${GOPATH}/src/github.com/fabric8-analytics/mercator-go
 
 install:
 	mkdir -p ${DESTDIR}/bin ${HANDLERSDIR}
-	cp ${NAME} ${DESTDIR}/bin/${NAME}
+	cp ${BIN_NAME} ${DESTDIR}/bin/${BIN_NAME}
 	cp handlers.yml ${HANDLERSDIR}
 	cp -f handlers/* ${HANDLERSDIR} || :
 	# bundled python pkginfo module
 	cp -rf handlers/pkginfo/ ${HANDLERSDIR}
 
-
 clean:
 	rm -rf ${HANDLERSDIR}
-	rm -f ${DESTDIR}/bin/${NAME}
-	rm -f ${GOPATH}/src/github.com/shaded-enmity/mercator
+	rm -f ${DESTDIR}/bin/${BIN_NAME}
+	rm -f ${GOPATH}/src/github.com/fabric8-analytics/mercator-go
 
 check:
 	docker build -t mercator-tests -f Dockerfile.tests .
