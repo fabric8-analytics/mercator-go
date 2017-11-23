@@ -32,8 +32,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shaded-enmity/mercator/core"
-	"github.com/shaded-enmity/mercator/core/fileutils"
+	"github.com/fabric8-analytics/mercator-go/core"
+	"github.com/fabric8-analytics/mercator-go/core/fileutils"
 )
 
 // Sync our Goroutines

@@ -52,11 +52,10 @@ handlers:
 
 build: handlers
 	go get 'gopkg.in/yaml.v2'
-	rm -f ${GOPATH}/src/github.com/shaded-enmity/mercator
-	mkdir -p ${GOPATH}/src/github.com/shaded-enmity/
-	ln -s `pwd` ${GOPATH}/src/github.com/shaded-enmity/mercator
+	mkdir -p ${GOPATH}/src/github.com/fabric8-analytics/
+	ln -f -s `pwd` ${GOPATH}/src/github.com/fabric8-analytics/mercator-go
 	go build -o ${NAME}
-	rm -f ${GOPATH}/src/github.com/shaded-enmity/mercator
+	rm -f ${GOPATH}/src/github.com/fabric8-analytics/mercator-go
 
 install:
 	mkdir -p ${DESTDIR}/bin ${HANDLERSDIR}
@@ -66,11 +65,10 @@ install:
 	# bundled python pkginfo module
 	cp -rf handlers/pkginfo/ ${HANDLERSDIR}
 
-
 clean:
 	rm -rf ${HANDLERSDIR}
 	rm -f ${DESTDIR}/bin/${NAME}
-	rm -f ${GOPATH}/src/github.com/shaded-enmity/mercator
+	rm -f ${GOPATH}/src/github.com/fabric8-analytics/mercator-go
 
 check:
 	docker build -t mercator-tests -f Dockerfile.tests .
