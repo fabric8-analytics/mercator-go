@@ -1,0 +1,10 @@
+package: github.com/fabric8-analytics/mercator-go
+import:
+- package: github.com/andybalholm/cascadia
+- package: github.com/tdewolff/parse
+  subpackages:
+  - css
+- package: golang.org/x/net
+  subpackages:
+  - html
+- package: gopkg.in/yaml.v2

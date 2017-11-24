@@ -18,13 +18,14 @@ GOPATH_SRC=${GOPATH}/src/${ORG}/${NAME}
 DESTDIR=/usr
 HANDLERSDIR=${DESTDIR}/share/${BIN_NAME}
 HANDLERS_TEMPLATE=handler_templates/handlers_template.yml
-DOTNET=NO
-RUST=NO
-JAVA=YES
-HASKELL=NO
 RUBY=YES
 NPM=YES
 PYTHON=YES
+JAVA=NO
+DOTNET=NO
+RUST=NO
+HASKELL=NO
+GOLANG=YES
 
 all:
 	$(MAKE) clean
@@ -63,6 +64,11 @@ handlers:
 		pushd ./handlers/haskell_handler && $(MAKE) all; \
 		popd; \
 		cat handler_templates/handler_haskellcabal >> handlers.yml; \
+	fi
+	@if [ "$(GOLANG)" == "YES" ]; then \
+		pushd ./handlers/golang_handler && $(MAKE) all; \
+		popd; \
+		cat handler_templates/handler_goglide >> handlers.yml; \
 	fi
 
 build: handlers
