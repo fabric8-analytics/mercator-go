@@ -35,16 +35,16 @@ type Args []string
 
 // DefinedHandler Handler description as defined by the YAML
 type DefinedHandler struct {
-	Name             string
-	Description      string
-	Binary           string
-	Args             Args
-	Handler          string
-	Types            FileTypes
-	InArchive        ArchiveContains
-	FilePatterns     DefinedRuleSet
-	PathPatterns     DefinedRuleSet
-	Lockfile         DefinedRuleSet
+	Name         string
+	Description  string
+	Binary       string
+	Args         Args
+	Handler      string
+	Types        FileTypes
+	InArchive    ArchiveContains
+	FilePatterns DefinedRuleSet
+	PathPatterns DefinedRuleSet
+	Lockfile     DefinedRuleSet
 }
 
 // DefinedConfiguration Configuration description as defined by the YAML
