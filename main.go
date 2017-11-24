@@ -28,8 +28,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sync"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/fabric8-analytics/mercator-go/core"
@@ -66,10 +66,10 @@ type DigestsRecord struct {
 
 // ItemRecord Contains final information to be printed out
 type ItemRecord struct {
-	RecTime   time.Time  `json:"time"`
-	Path      string     `json:"path"`
-	Ecosystem string     `json:"ecosystem"`
-	Result    JSONObject `json:"result,omitempty"`
+	RecTime   time.Time     `json:"time"`
+	Path      string        `json:"path"`
+	Ecosystem string        `json:"ecosystem"`
+	Result    JSONObject    `json:"result,omitempty"`
 	Digests   DigestsRecord `json:"digests"`
 }
 
@@ -334,7 +334,7 @@ func main() {
 			log.Fatalln(err)
 		} else {
 			ch := walkFiles(scan_path, config)
-			var resolved         []*ItemRecord
+			var resolved []*ItemRecord
 			var java_invocations []*JavaHandlerInvocation
 			versions := make(map[string]string)
 
@@ -365,7 +365,7 @@ func main() {
 						wg.Add(1)
 						go runHandler(elem, config, &r, true)
 					} else {
-						invocation := &JavaHandlerInvocation{ Config: config, Record: &r, Resolved: elem }
+						invocation := &JavaHandlerInvocation{Config: config, Record: &r, Resolved: elem}
 						java_invocations = append(java_invocations, invocation)
 					}
 				}
@@ -383,7 +383,7 @@ func main() {
 				processJava(java_invocations)
 
 				// TODO: Post-process resolved JSONs and validate schemas
-				if data, err := json.MarshalIndent(Output{ Versions: versions, Items: resolved }, "", "   "); err != nil {
+				if data, err := json.MarshalIndent(Output{Versions: versions, Items: resolved}, "", "   "); err != nil {
 					log.Fatalln(err)
 				} else {
 					fmt.Println(string(data))
