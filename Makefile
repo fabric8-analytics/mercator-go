@@ -11,7 +11,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Mercator. If not, see <http://www.gnu.org/licenses/>.
 #
+NAME=mercator-go
 BIN_NAME=mercator
+ORG=github.com/fabric8-analytics
+GOPATH_SRC=${GOPATH}/src/${ORG}/${NAME}
 DESTDIR=/usr
 HANDLERSDIR=${DESTDIR}/share/${BIN_NAME}
 HANDLERS_TEMPLATE=handler_templates/handlers_template.yml
@@ -52,10 +55,14 @@ handlers:
 
 build: handlers
 	go get 'gopkg.in/yaml.v2'
-	mkdir -p ${GOPATH}/src/github.com/fabric8-analytics/
-	ln -f -s `pwd` ${GOPATH}/src/github.com/fabric8-analytics/mercator-go
+	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
+		mkdir -p ${GOPATH}/src/${ORG}/; \
+		ln -f -s `pwd` ${GOPATH_SRC}; \
+	fi
 	go build -o ${BIN_NAME}
-	rm -f ${GOPATH}/src/github.com/fabric8-analytics/mercator-go
+	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
+		rm -f ${GOPATH_SRC}; \
+	fi
 
 install:
 	mkdir -p ${DESTDIR}/bin ${HANDLERSDIR}
@@ -68,7 +75,9 @@ install:
 clean:
 	rm -rf ${HANDLERSDIR}
 	rm -f ${DESTDIR}/bin/${BIN_NAME}
-	rm -f ${GOPATH}/src/github.com/fabric8-analytics/mercator-go
+	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
+		rm -f ${GOPATH_SRC}; \
+	fi
 
 check:
 	docker build -t mercator-tests -f Dockerfile.tests .
