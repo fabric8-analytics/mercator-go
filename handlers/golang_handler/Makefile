@@ -15,4 +15,5 @@
 .PHONY : clean
 
 all:
-	cp golang ../golang
+	go get 'github.com/Masterminds/glide/cfg'
+	go build -o ../golang

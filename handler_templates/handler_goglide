@@ -1,6 +1,5 @@
   - name: "Go-Glide"
     description: "Go Glide"
-    binary: "python3"
     handler: "golang"
     filepatterns:
      - "^glide\\.yaml$"

@@ -21,11 +21,11 @@ HANDLERS_TEMPLATE=handler_templates/handlers_template.yml
 RUBY=YES
 NPM=YES
 PYTHON=YES
-JAVA=NO
+JAVA=YES
 DOTNET=NO
 RUST=NO
 HASKELL=NO
-GOLANG=YES
+GOLANG=NO
 
 all:
 	$(MAKE) clean

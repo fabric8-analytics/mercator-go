@@ -1,10 +1,26 @@
-package: github.com/fabric8-analytics/mercator-go
+package: github.com/Masterminds/glide
+homepage: https://masterminds.github.io/glide
+license: MIT
+owners:
+- name: Matt Butcher
+  email: technosophos@gmail.com
+  homepage: http://technosophos.com
+- name: Matt Farina
+  email: matt@mattfarina.com
+  homepage: https://www.mattfarina.com
+ignore:
+- appengine
+excludeDirs:
+- node_modules
 import:
-- package: github.com/andybalholm/cascadia
-- package: github.com/tdewolff/parse
-  subpackages:
-  - css
-- package: golang.org/x/net
-  subpackages:
-  - html
 - package: gopkg.in/yaml.v2
+- package: github.com/Masterminds/vcs
+  version: ^1.2.0
+  repo:    git@github.com:Masterminds/vcs
+  vcs:     git
+- package: github.com/codegangsta/cli
+  version: f89effe81c1ece9c5b0fda359ebd9cf65f169a51
+- package: github.com/Masterminds/semver
+  version: ^1.0.0
+testImport:
+- package: github.com/arschles/assert

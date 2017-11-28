@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    22%{?dist}
+Release:    23%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -46,7 +46,7 @@ Obtains manifests from various ecosystems such as NPM, .NET, Java and Python
 yes | certmgr -ssl https://go.microsoft.com
 yes | certmgr -ssl https://nuget.org
 export GOPATH=/tmp
-make build JAVA=YES DOTNET=YES RUST=NO
+make build JAVA=YES DOTNET=YES GOLANG=YES
 
 %install
 make install DESTDIR=%{buildroot}%{_prefix}
@@ -63,6 +63,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Wed Nov 29 2017 Jiri Popelka <jpopelka@redhat.com> - 1-23
+- Go Glide support
+
 * Mon Nov 20 2017 Pavel Kajaba <pavel@redhat.com> - 1-22
 - Ignore inherited description in pom.xml
 
