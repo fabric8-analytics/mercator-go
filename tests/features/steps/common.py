@@ -15,6 +15,7 @@ SCANNED_RUBY = 'fixtures/ruby'
 SCANNED_DOTNET = 'fixtures/dotnet'
 SCANNED_RUST = 'fixtures/rust'
 SCANNED_HASKELL = 'fixtures/haskell'
+SCANNED_GOLANG = 'fixtures/golang'
 
 result_dict = {'javascript': javascript_result,
                'java': java_result,
@@ -23,7 +24,8 @@ result_dict = {'javascript': javascript_result,
                'python': python_result,
                'python-dist': python_dist_result,
                'rustcargo': rust_result,
-               'haskell': haskell_result
+               'haskell': haskell_result,
+               'golang': golang_result
                }
 
 
@@ -99,6 +101,12 @@ def get_scan_info(context):
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_HASKELL]).decode('utf-8')
     context.ecosystem = 'haskell'
+
+
+@when('Scanning the Go Glide files')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_GOLANG]).decode('utf-8')
+    context.ecosystem = 'golang'
 
 
 @then('We have correct output')

@@ -18,6 +18,6 @@ ENV GOPATH=/tmp
 ENV MERCATOR_PYTHON=python3
 
 # Install mercator-go
-RUN make all DOTNET=YES RUST=YES JAVA=YES HASKELL=YES
+RUN make all DOTNET=YES RUST=YES JAVA=YES HASKELL=YES GOLANG=YES
 
 CMD ["/mercator-go/tests/runtest.sh"]
