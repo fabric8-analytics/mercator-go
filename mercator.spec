@@ -35,6 +35,8 @@ Requires:       java maven
 BuildRequires:  mono-devel nuget
 Requires:       mono-core
 
+# golang handler
+BuildRequires:  glide
 
 %description
 Obtains manifests from various ecosystems such as NPM, .NET, Java and Python

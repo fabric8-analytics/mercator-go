@@ -1,6 +1,6 @@
 FROM fedora:25
 
-RUN dnf install -y ghc-ghc ghc-Cabal cabal-install cmake openssl-devel ruby java-devel maven which mono-devel python3 git golang make npm nuget && dnf clean all
+RUN dnf install -y ghc-ghc ghc-Cabal cabal-install cmake openssl-devel ruby java-devel maven which mono-devel python3 git golang glide make npm nuget && dnf clean all
 
 # install test requierements
 RUN pip3 install behave

@@ -73,11 +73,14 @@ handlers:
 
 build: handlers
 	go get 'gopkg.in/yaml.v2'
+	# for 'go build' to work properly, we need to be in $GOPATH_SRC
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		mkdir -p ${GOPATH}/src/${ORG}/; \
 		ln -f -s `pwd` ${GOPATH_SRC}; \
 	fi
-	go build -o ${BIN_NAME}
+	pushd ${GOPATH_SRC}; \
+		go build -o ${BIN_NAME}; \
+	popd
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		rm -f ${GOPATH_SRC}; \
 	fi

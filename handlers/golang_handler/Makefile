@@ -12,8 +12,24 @@
 # along with Mercator. If not, see <http://www.gnu.org/licenses/>.
 #
 
+GOPATH_SRC_MERCATOR=${GOPATH}/src/github.com/fabric8-analytics/mercator-go
+GOPATH_SRC_HANDLERS=${GOPATH_SRC_MERCATOR}/handlers
+GOPATH_SRC_HANDLERS_GOLANG=${GOPATH_SRC_HANDLERS}/golang_handler
+
 .PHONY : clean
 
 all:
-	go get 'github.com/Masterminds/glide/cfg'
-	go build -o ../golang
+	# for 'glide up' and 'go build' to work we need to be in $GOPATH_SRC_HANDLERS_GOLANG
+	@if [ `pwd` != "${GOPATH_SRC_HANDLERS_GOLANG}" ]; then \
+		mkdir -p ${GOPATH_SRC_HANDLERS}; \
+		ln -f -s `pwd` ${GOPATH_SRC_HANDLERS_GOLANG}; \
+	fi
+	pushd ${GOPATH_SRC_HANDLERS_GOLANG}; \
+		glide up; \
+		go build -o ../golang; \
+	popd
+	# if we did those hacks previously, we need to clean after ourselves,
+	# becase the main makefile does similar hacks and it'd fail
+	@if [ `pwd` != "${GOPATH_SRC_HANDLERS_GOLANG}" ]; then \
+	        rm -rf ${GOPATH_SRC_MERCATOR}; \
+	fi
