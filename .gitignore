@@ -1,0 +1,12 @@
+/handlers/dotnet
+/handlers/dotnet_handler/packages/
+/handlers/golang
+/handlers/golang_handler/vendor/
+/handlers/haskell
+/handlers/java
+/handlers/rust
+/handlers/rust_handler/target/
+/handlers.yml
+/mercator
+__pycache__/
+/tests/MercatorDotNet
