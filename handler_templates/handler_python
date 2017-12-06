@@ -1,0 +1,20 @@
+  - name: "Python"
+    description: "PyPI Package (source)"
+    filepatterns:
+     - "^setup\\.py$"
+    binary: "python3"
+    handler: "python"
+  - name: "Python-Dist"
+    description: "Installed PyPI Package"
+    pathpatterns:
+     - "^.*\\.dist-info/metadata\\.json$"
+    filepatterns:
+     - "^PKG-INFO$"
+    handler: "python-dist"
+    binary: "python3"
+  - name: "Python-RequirementsTXT"
+    description: "Python requirements.txt file"
+    filepatterns:
+      - "^requirements\\.txt$"
+    binary: "python3"
+    handler: "python-requirements"

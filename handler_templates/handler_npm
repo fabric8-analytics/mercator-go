@@ -1,0 +1,8 @@
+  - name: "NPM"
+    description: "NPMs package.json"
+    filepatterns:
+     - "^package\\.json$"
+    lockfile:
+     - "npm-shrinkwrap\\.json$"
+    binary: "node"
+    handler: "node"

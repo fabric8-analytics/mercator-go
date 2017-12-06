@@ -22,6 +22,9 @@ DOTNET=NO
 RUST=NO
 JAVA=YES
 HASKELL=NO
+RUBY=YES
+NPM=YES
+PYTHON=YES
 
 all:
 	$(MAKE) clean
@@ -32,6 +35,15 @@ all:
 
 handlers:
 	cp $(HANDLERS_TEMPLATE) handlers.yml
+	@if [ "$(PYTHON)" == "YES" ]; then \
+		cat handler_templates/handler_python >> handlers.yml; \
+	fi
+	@if [ "$(RUBY)" == "YES" ]; then \
+		cat handler_templates/handler_ruby >> handlers.yml; \
+	fi
+	@if [ "$(NPM)" == "YES" ]; then \
+		cat handler_templates/handler_npm >> handlers.yml; \
+	fi
 	@if [ "$(JAVA)" == "YES" ]; then \
 		pushd handlers/java_handler && $(MAKE) all; \
 		popd; \
