@@ -1,0 +1,9 @@
+  - name: "Ruby"
+    description: "RubyGem Package"
+    filepatterns:
+     - "^[Gg]emspec$"
+     - "^.*\\.[Gg]emspec$"
+    lockfile:
+     - "Gemfile\\.lock$"
+    handler: "ruby"
+    binary: "ruby"
