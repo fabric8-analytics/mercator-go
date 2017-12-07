@@ -11,7 +11,7 @@ load_jenkins_vars() {
 }
 
 prep() {
-    yum -y update
+    yum -y install epel-release
     yum -y install docker rpmdevtools copr-cli git
     systemctl start docker
 }
