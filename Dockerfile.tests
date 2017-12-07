@@ -1,23 +1,25 @@
 FROM fedora:25
 
-RUN dnf install -y ghc-ghc ghc-Cabal cabal-install cmake openssl-devel ruby java-devel maven which mono-devel python3 git golang make npm nuget && dnf clean all
+ENV PATH="$PATH:/root/.cargo/bin" \
+    GOPATH=/tmp \
+    MERCATOR_PYTHON=python3
 
-# install test requierements
+RUN dnf install -y ghc-ghc ghc-Cabal cabal-install cmake openssl-devel ruby java-devel maven which mono-devel python3 git golang glide make npm nuget && dnf clean all
+
+# install test requirements
 RUN pip3 install behave
 
 # install stable rust & build deps for cargo
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y 
-ENV PATH="$PATH:/root/.cargo/bin"
 
 # fix them NuGets certificates
 RUN yes | certmgr -ssl -m https://go.microsoft.com && yes | certmgr -ssl -m https://nuget.org
 
-COPY . /mercator-go
 WORKDIR /mercator-go
-ENV GOPATH=/tmp
-ENV MERCATOR_PYTHON=python3
+
+COPY . /mercator-go
 
 # Install mercator-go
-RUN make all DOTNET=YES RUST=YES JAVA=YES HASKELL=YES
+RUN make all DOTNET=YES RUST=YES JAVA=YES HASKELL=YES GOLANG=YES
 
 CMD ["/mercator-go/tests/runtest.sh"]

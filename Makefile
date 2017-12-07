@@ -18,13 +18,14 @@ GOPATH_SRC=${GOPATH}/src/${ORG}/${NAME}
 DESTDIR=/usr
 HANDLERSDIR=${DESTDIR}/share/${BIN_NAME}
 HANDLERS_TEMPLATE=handler_templates/handlers_template.yml
-DOTNET=NO
-RUST=NO
-JAVA=YES
-HASKELL=NO
 RUBY=YES
 NPM=YES
 PYTHON=YES
+JAVA=YES
+DOTNET=NO
+RUST=NO
+HASKELL=NO
+GOLANG=NO
 
 all:
 	$(MAKE) clean
@@ -64,14 +65,22 @@ handlers:
 		popd; \
 		cat handler_templates/handler_haskellcabal >> handlers.yml; \
 	fi
+	@if [ "$(GOLANG)" == "YES" ]; then \
+		pushd ./handlers/golang_handler && $(MAKE) all; \
+		popd; \
+		cat handler_templates/handler_goglide >> handlers.yml; \
+	fi
 
 build: handlers
 	go get 'gopkg.in/yaml.v2'
+	# for 'go build' to work properly, we need to be in $GOPATH_SRC
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		mkdir -p ${GOPATH}/src/${ORG}/; \
 		ln -f -s `pwd` ${GOPATH_SRC}; \
 	fi
-	go build -o ${BIN_NAME}
+	pushd ${GOPATH_SRC}; \
+		go build -o ${BIN_NAME}; \
+	popd
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		rm -f ${GOPATH_SRC}; \
 	fi

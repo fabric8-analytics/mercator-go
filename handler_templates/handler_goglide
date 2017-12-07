@@ -1,0 +1,7 @@
+  - name: "Go-Glide"
+    description: "Go Glide"
+    handler: "golang"
+    filepatterns:
+     - "^glide\\.yaml$"
+    lockfile:
+     - "glide\\.lock$"
