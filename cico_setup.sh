@@ -20,6 +20,10 @@ run_tests() {
     make check
 }
 
+# Current copr token has expiration date: 2018-05-29
+# After that date you need to update it in almighty-jobs/devtools-ci-index.yaml
+# Get you token at https://copr.fedorainfracloud.org/api/ and send login/token
+# to bstinson
 create_copr_config() {
     mkdir -p ~/.config/
     cat > ~/.config/copr <<EOF
