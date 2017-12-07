@@ -21,6 +21,7 @@ run_tests() {
 }
 
 create_copr_config() {
+    mkdir -p ~/.config/
     cat > ~/.config/copr <<EOF
 [copr-cli]
 login = ${COPR_LOGIN_MERCATOR}
