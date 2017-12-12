@@ -110,3 +110,59 @@ golang_result = {
             "testImport": [{"package": "github.com/arschles/assert"}]
          },
          "digests": {"manifest": "6f40cd940047e7120c3985f92337a446d0de15da", "lockfile": "d33a9bbc82c409839259f3ebab5c1849bfb70086"}}
+
+gradle_result = {
+         "ecosystem": "GradleBuild",
+         "result": {
+            "apply": [
+               "plugin: 'java'",
+               "plugin: 'maven'"
+            ],
+            "artifacts": {
+               "archives": [
+                  "sourcesJar",
+                  "javadocJar"
+               ]
+            },
+            "dependencies": [
+               {
+                  "excludes": [],
+                  "group": "com.google.guava",
+                  "name": "guava",
+                  "type": "compile",
+                  "version": "18.0"
+               }
+            ],
+            "group": "com.github.jitpack",
+            "install": {
+               "repositories.mavenInstaller": {
+                  "pom.project": {
+                     "licenses": {
+                        "license": {
+                           "distribution": "repo",
+                           "name": "The Apache Software License, Version 2.0",
+                           "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                     }
+                  }
+               }
+            },
+            "repositories": [
+               {
+                  "data": {
+                     "name": "mavenCentral()"
+                  },
+                  "type": "unknown"
+               }
+            ],
+            "sourceCompatibility": "1.8 // java 8",
+            "targetCompatibility": "1.8",
+            "task": {
+               "classifier": "javadoc",
+               "from": "javadoc.destinationDir"
+            }
+         },
+         "digests": {
+            "manifest": "561092e9aa9d3924eb37bb734c15df6e286ad154"
+         }
+      } 

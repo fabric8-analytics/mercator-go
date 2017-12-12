@@ -8,3 +8,4 @@ features/python-dist.feature
 features/rust.feature
 features/haskell.feature
 features/golang.feature
+features/gradle.feature

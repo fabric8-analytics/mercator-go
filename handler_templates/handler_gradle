@@ -1,0 +1,7 @@
+  - name: "GradleBuild"
+    description: "Gradle build file"
+    binary: "node"
+    handler: "gradle"
+    filepatterns:
+     - "^build\\.gradle$"
+

@@ -16,6 +16,7 @@ SCANNED_DOTNET = 'fixtures/dotnet'
 SCANNED_RUST = 'fixtures/rust'
 SCANNED_HASKELL = 'fixtures/haskell'
 SCANNED_GOLANG = 'fixtures/golang'
+SCANNED_GRADLE = 'fixtures/gradle'
 
 result_dict = {'javascript': javascript_result,
                'java': java_result,
@@ -25,7 +26,8 @@ result_dict = {'javascript': javascript_result,
                'python-dist': python_dist_result,
                'rustcargo': rust_result,
                'haskell': haskell_result,
-               'golang': golang_result
+               'golang': golang_result,
+               'gradle': gradle_result
                }
 
 
@@ -109,7 +111,13 @@ def get_scan_info(context):
     context.ecosystem = 'golang'
 
 
+@when('Scanning the build.gradle file')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_GRADLE]).decode('utf-8')
+    context.ecosystem = 'gradle'
 @then('We have correct output')
+
+
 def check_scan_info(context):
     test_case = json.loads(context.out)
     assert len(test_case["items"]) == 1
