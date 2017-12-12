@@ -37,12 +37,18 @@ all:
 handlers:
 	cp $(HANDLERS_TEMPLATE) handlers.yml
 	@if [ "$(PYTHON)" == "YES" ]; then \
+		pushd ./handlers/python_handler && $(MAKE) all; \
+		popd; \
 		cat handler_templates/handler_python >> handlers.yml; \
 	fi
 	@if [ "$(RUBY)" == "YES" ]; then \
+		pushd ./handlers/ruby_handler && $(MAKE) all; \
+		popd; \
 		cat handler_templates/handler_ruby >> handlers.yml; \
 	fi
 	@if [ "$(NPM)" == "YES" ]; then \
+		pushd ./handlers/npm_handler && $(MAKE) all; \
+		popd; \
 		cat handler_templates/handler_npm >> handlers.yml; \
 	fi
 	@if [ "$(JAVA)" == "YES" ]; then \
@@ -91,7 +97,7 @@ install:
 	cp handlers.yml ${HANDLERSDIR}
 	cp -f handlers/* ${HANDLERSDIR} || :
 	# bundled python pkginfo module
-	cp -rf handlers/pkginfo/ ${HANDLERSDIR}
+	cp -rf handlers/python_handler/pkginfo/ ${HANDLERSDIR}
 
 clean:
 	rm -rf ${HANDLERSDIR}
