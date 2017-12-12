@@ -4,6 +4,11 @@
 /handlers/golang_handler/vendor/
 /handlers/haskell
 /handlers/java
+/handlers/node
+/handlers/python
+/handlers/python-dist
+/handlers/python-requirements
+/handlers/ruby
 /handlers/rust
 /handlers/rust_handler/target/
 /handlers.yml
