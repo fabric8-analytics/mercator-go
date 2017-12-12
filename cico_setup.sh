@@ -43,6 +43,13 @@ build_rpm() {
     copr-cli build jpopelka/mercator ~/rpmbuild/SRPMS/mercator-*.src.rpm
 }
 
+build_test_rpm() {
+    rpmdev-setuptree
+    ./make_rpm.sh --source
+
+    create_copr_config
+    copr-cli build jpopelka/mercator-test ~/rpmbuild/SRPMS/mercator-*.src.rpm
+}
 
 load_jenkins_vars
 prep
