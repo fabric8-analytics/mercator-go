@@ -5,13 +5,13 @@ Mercator is a Swiss army knife for obtaining package metadata across various pac
 
 | Language | Ecosystem |
 |----------|-----------|
-| Python | PyPI |
-| Ruby | Gems |
-| Node | NPM |
-| Java | Maven |
-| Rust | Cargo |
-| .NET | Nuget |
-| Haskell | Hackage |
+| Python   | PyPI |
+| Ruby     | Gems |
+| Node     | NPM |
+| Java     | Maven |
+| Rust     | Cargo |
+| .NET     | Nuget |
+| Haskell  | Hackage |
 
 Simply point Mercator at some directory and it will walk down all child directories and collect information
 about all encountered package manifests. The output is always a JSON document describing what has been
@@ -22,44 +22,50 @@ that produced it, so if you want to do some further processing or analytics you 
 
 See our [contributing guidelines](https://github.com/fabric8-analytics/common/blob/master/CONTRIBUTING.md) for more info.
  
-## Installation & Running
+## Installation
 
-Make sure that your `GOPATH` is set, then the following packages are necessary to fully build without handlers:
+Necessary dependencies (package names are taken from Fedora) to build Mercator without any handlers:
 
 ```
-cmake openssl-devel git golang make
+openssl-devel git golang make
 ```
 
-Per handler dependencies:  
+Per handler dependencies:
 
-Ruby:  
+Ruby:
 
 ```
 ruby
 ```
 
-Java:  
+Java:
 
 ```
 java-devel maven
 ```
 
-Python:  
+Python:
 
 ```
-python3
+python3 python3-devel
 ```
 
-Javascript:  
+Javascript:
 
 ```
 nodejs
 ```
 
-Dotnet:  
+Dotnet:
 
 ```
 mono-devel nuget
+```
+
+Golang:
+
+```
+glide
 ```
 
 for Dotnet you have to execute this command first:
@@ -68,26 +74,35 @@ for Dotnet you have to execute this command first:
 yes | certmgr -ssl https://go.microsoft.com && yes | certmgr -ssl https://nuget.org
 ```
 
-All handler dependencies together:  
+All handler dependencies together:
 ```
-ruby java-devel python3 nodejs mono-devel nuget
+ruby java-devel python3 python3-devel nodejs mono-devel nuget glide
 ```
 
-Note: the `which` package is required because of [bug 1396395](https://bugzilla.redhat.com/show_bug.cgi?id=1396395); when this is fixed, it can be safely removed.
+If you have all the packages installed, make sure that your `GOPATH` is set.
+You can set it to for example `$(pwd)` or `/tmp` like: `export GOPATH=/tmp`.
 
-If you have all the packages installed, simply invoke `make`:
+Then just invoke `make`:
 
 ```
 make build
 sudo make install
 ```
 
-You can enable handlers which require advanced building (this is example for DOTNET):
+Some handlers are built/installed by default, some need to be explicitly enabled,
+see beginning of [Makefile](Makefile).
+
+If you need to build for example dotnet handler (which is disabled by default),
+you either have to change `DOTNET=NO` to `DOTNET=YES` in [Makefile](Makefile) or
+build it like:
+
 ```
 make build DOTNET=YES
 ```
-There are three such handlers: DOTNET, RUST and JAVA. JAVA is enabled by default, rest is for disabled.
 
+Note: You can also take a look at our [spec file](mercator.spec), which we use to build RPMs.
+
+## Running
 
 After that, `Mercator` is ready to be used:
 
