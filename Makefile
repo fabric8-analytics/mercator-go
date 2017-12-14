@@ -15,8 +15,11 @@ NAME=mercator-go
 BIN_NAME=mercator
 ORG=github.com/fabric8-analytics
 GOPATH_SRC=${GOPATH}/src/${ORG}/${NAME}
-DESTDIR=/usr
+DESTDIR_DEFAULT=/usr
+DESTDIR=${DESTDIR_DEFAULT}
 HANDLERSDIR=${DESTDIR}/share/${BIN_NAME}
+HANDLERS_CONFIG_DEFAULT=${DESTDIR_DEFAULT}/share/mercator/handlers.yml
+HANDLERS_CONFIG=${DESTDIR}/share/mercator/handlers.yml
 HANDLERS_TEMPLATE=handler_templates/handlers_template.yml
 RUBY=YES
 NPM=YES
@@ -79,7 +82,10 @@ handlers:
 
 build: handlers
 	go get 'gopkg.in/yaml.v2'
-	# for 'go build' to work properly, we need to be in $GOPATH_SRC
+	@if [ "$(DESTDIR)" != "${DESTDIR_DEFAULT}" ]; then \
+		sed -i -e "s~${HANDLERS_CONFIG_DEFAULT}~${HANDLERS_CONFIG}~" main.go; \
+	fi
+	# for 'go build' to work properly, we need to be in GOPATH_SRC
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		mkdir -p ${GOPATH}/src/${ORG}/; \
 		ln -f -s `pwd` ${GOPATH_SRC}; \
@@ -90,6 +96,10 @@ build: handlers
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		rm -f ${GOPATH_SRC}; \
 	fi
+	@if [ "$(DESTDIR)" != "${DESTDIR_DEFAULT}" ]; then \
+		sed -i -e "s~${HANDLERS_CONFIG}~${HANDLERS_CONFIG_DEFAULT}~" main.go; \
+	fi
+
 
 install:
 	mkdir -p ${DESTDIR}/bin ${HANDLERSDIR}
