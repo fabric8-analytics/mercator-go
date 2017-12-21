@@ -38,6 +38,9 @@ Requires:       mono-core
 # golang handler
 BuildRequires:  glide
 
+# gradle handler
+BuildRequires:  npm
+
 %description
 Obtains manifests from various ecosystems such as NPM, .NET, Java and Python
 
@@ -48,7 +51,7 @@ Obtains manifests from various ecosystems such as NPM, .NET, Java and Python
 yes | certmgr -ssl https://go.microsoft.com
 yes | certmgr -ssl https://nuget.org
 export GOPATH=/tmp
-make build JAVA=YES DOTNET=YES GOLANG=YES
+make build JAVA=YES DOTNET=YES GOLANG=YES GRADLE=YES
 
 %install
 make install DESTDIR=%{buildroot}%{_prefix}
