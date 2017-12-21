@@ -25,6 +25,7 @@ RUBY=YES
 NPM=YES
 PYTHON=YES
 JAVA=YES
+GRADLE=NO
 DOTNET=NO
 RUST=NO
 HASKELL=NO
@@ -79,6 +80,11 @@ handlers:
 		popd; \
 		cat handler_templates/handler_goglide >> handlers.yml; \
 	fi
+	@if [ "$(GRADLE)" == "YES" ]; then \
+		pushd ./handlers/gradle_handler && $(MAKE) all; \
+		popd; \
+		cat handler_templates/handler_gradle >> handlers.yml; \
+	fi
 
 build: handlers
 	go get 'gopkg.in/yaml.v2'
@@ -108,7 +114,10 @@ install:
 	cp -f handlers/* ${HANDLERSDIR} || :
 	# bundled python pkginfo module
 	cp -rf handlers/python_handler/pkginfo/ ${HANDLERSDIR}
-
+	# bundle gradle dependencies
+	@if [ -d handlers/gradle_handler/node_modules ]; then \
+		cp -r handlers/gradle_handler/node_modules ${HANDLERSDIR}; \
+	fi
 clean:
 	rm -rf ${HANDLERSDIR}
 	rm -f ${DESTDIR}/bin/${BIN_NAME}

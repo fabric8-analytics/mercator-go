@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    23%{?dist}
+Release:    24%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -38,6 +38,9 @@ Requires:       mono-core
 # golang handler
 BuildRequires:  glide
 
+# gradle handler
+BuildRequires:  npm
+
 %description
 Obtains manifests from various ecosystems such as NPM, .NET, Java and Python
 
@@ -48,7 +51,7 @@ Obtains manifests from various ecosystems such as NPM, .NET, Java and Python
 yes | certmgr -ssl https://go.microsoft.com
 yes | certmgr -ssl https://nuget.org
 export GOPATH=/tmp
-make build JAVA=YES DOTNET=YES GOLANG=YES
+make build JAVA=YES DOTNET=YES GOLANG=YES GRADLE=YES
 
 %install
 make install DESTDIR=%{buildroot}%{_prefix}
@@ -65,6 +68,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Thu Dec 14 2017 Pavel Kajaba <pavel@redhat.com> - 1-24
+- Initial Gradle support
+
 * Wed Nov 29 2017 Jiri Popelka <jpopelka@redhat.com> - 1-23
 - Go Glide support
 

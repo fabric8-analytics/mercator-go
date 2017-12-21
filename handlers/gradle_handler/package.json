@@ -1,0 +1,15 @@
+{
+  "name": "gradle_handler",
+  "description": "Simple handler for mercator which obtains information from build.gradle files",
+  "repository": "fabric8-analytics/mercator",
+  "license": "Apache-2.0",
+  "version": "1.0.0",
+  "author": "Pavel Kajaba <pavel@redhat.com>",
+  "dependencies": {
+    "backslash": "^0.2.0",
+    "gradle-to-js": "^1.0.1"
+  },
+  "files": [
+    "gradle"
+  ]
+}

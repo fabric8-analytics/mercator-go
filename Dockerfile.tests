@@ -20,6 +20,6 @@ WORKDIR /mercator-go
 COPY . /mercator-go
 
 # Install mercator-go
-RUN make all DOTNET=YES RUST=YES JAVA=YES HASKELL=YES GOLANG=YES
+RUN make all DOTNET=YES RUST=YES JAVA=YES HASKELL=YES GOLANG=YES GRADLE=YES
 
 CMD ["/mercator-go/tests/runtest.sh"]
