@@ -4,5 +4,6 @@
      - "^package\\.json$"
     lockfile:
      - "npm-shrinkwrap\\.json$"
+     - "package-lock\\.json$"
     binary: "node"
     handler: "node"
