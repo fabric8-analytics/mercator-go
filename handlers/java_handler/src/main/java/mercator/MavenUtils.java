@@ -111,11 +111,13 @@ public class MavenUtils {
         while(sc.hasNextLine()) {
             String line = sc.nextLine();
             if(line.equals(xmlTag)) {
-                System.out.println("XMLTag found");
                 xmlTagCount ++;
                 if(xmlTagCount > 1) {
                     continue;
                 }
+            }
+            if(line.contains("os.detected.release")) {
+                continue; // skip lines with detected os release as they might break the parser
             }
             pw.println(line);
         }
