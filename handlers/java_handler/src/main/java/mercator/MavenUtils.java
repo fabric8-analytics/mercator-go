@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -103,7 +104,7 @@ public class MavenUtils {
         resolvedPomFixed = File.createTempFile("resolvedpom-fixed", ".xml");
         resolvedPomFixed.deleteOnExit();
 
-        Scanner sc = new Scanner(new FileInputStream(resolvedPom));
+        Scanner sc = new Scanner(new FileInputStream(resolvedPom), StandardCharsets.UTF_8.name());
         String xmlTag = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
         int xmlTagCount = 0;
 
