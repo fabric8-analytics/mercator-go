@@ -15,7 +15,7 @@
 .PHONY : clean
 
 all:
-	mvn clean package
+	mvn clean test package
 	cp target/java-handler-*-jar-with-dependencies.jar ../java
 	$(MAKE) clean
 
