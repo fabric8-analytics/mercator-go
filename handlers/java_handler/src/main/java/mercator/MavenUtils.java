@@ -15,6 +15,10 @@ package mercator;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -79,8 +83,47 @@ public class MavenUtils {
             return null;
         }
 
-        Document parsedPom = readFileAsDocument(resolvedPom);
-        return parsedPom;
+        try {
+            File resolvedPomFixed = removeDuplicateXMLTag(resolvedPom);
+            Document parsedPom = readFileAsDocument(resolvedPomFixed);
+            return parsedPom;
+        } catch (java.io.IOException ex) {
+            return null;
+        }
+
+    }
+
+    /**
+     * Remove duplicate XML start tag from given XML file.
+     * @param resolvedPom
+     * @return File handle having only one XML start tag
+     * @throws IOException
+     */
+    public static File removeDuplicateXMLTag(File resolvedPom) throws IOException {
+        File resolvedPomFixed;
+        resolvedPomFixed = File.createTempFile("resolvedpom-fixed", ".xml");
+        resolvedPomFixed.deleteOnExit();
+
+        Scanner sc = new Scanner(new FileInputStream(resolvedPom), StandardCharsets.UTF_8.name());
+        String xmlTag = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        int xmlTagCount = 0;
+
+        PrintWriter pw = new PrintWriter(resolvedPomFixed);
+        while(sc.hasNextLine()) {
+            String line = sc.nextLine();
+            if(line.equals(xmlTag)) {
+                xmlTagCount ++;
+                if(xmlTagCount > 1) {
+                    continue;
+                }
+            }
+            if(line.contains("os.detected.release")) {
+                continue; // skip lines with detected os release as they might break the parser
+            }
+            pw.println(line);
+        }
+        pw.close();
+        return resolvedPomFixed;
     }
 
     public static  Document readFileAsDocument(File inputFile) {
