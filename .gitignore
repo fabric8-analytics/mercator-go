@@ -15,3 +15,8 @@
 /mercator
 __pycache__/
 /tests/MercatorDotNet
+.classpath
+.gitignore
+.project
+.settings/
+
