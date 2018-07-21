@@ -60,6 +60,14 @@ public class MavenUtils {
     private MavenUtils() {
     }
 
+    /**
+     * Expand given POM file.
+     * 
+     * This method builds an effective version of the given POM.
+     * 
+     * @param pomFile, POM files to expand
+     * @return parsed effective version of the given POM, null when error occurred.
+     */
     public static Document getParsedExpandedPom(File pomFile) {
 
         System.err.println(String.format("Attempting expansion of POM: %s", pomFile));
@@ -147,7 +155,7 @@ public class MavenUtils {
         return resolvedPomFixed;
     }
 
-    public static Document readFileAsDocument(File inputFile) {
+    private static Document readFileAsDocument(File inputFile) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
         try {
@@ -221,10 +229,24 @@ public class MavenUtils {
         return depMap;
     }
 
+    /**
+     * Check if we should attempt to build effective POMs.
+     * 
+     * @return true/false.
+     */
     public static boolean resolvePomsEnabled() {
         return Boolean.parseBoolean(System.getenv("MERCATOR_JAVA_RESOLVE_POMS"));
     }
 
+    /**
+     * Check if non-effective version of the given POM contains description.
+     * 
+     * If there is no description in the POM, it will be inherited from the parent
+     * when building an effective version of it.
+     * 
+     * @param pomDocument
+     * @return true/false
+     */
     private static Boolean ignoreDescription(Document pomDocument) {
         XPathFactory xpf = XPathFactory.newInstance();
         XPath xpath = xpf.newXPath();

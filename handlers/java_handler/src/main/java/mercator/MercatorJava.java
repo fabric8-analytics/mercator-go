@@ -33,9 +33,16 @@ import java.util.zip.ZipEntry;
 
 import org.json.simple.JSONObject;
 
+
+/**
+ * Mercator Java/Maven handler.
+ * 
+ * Supports pom.xml, JAR, WAR and EAR files.
+ */
 public class MercatorJava {
 
     public static void main(String[] args) {
+        // The CLI expects exactly one argument. It could be any of the supported file types.
         if (args.length != 1) {
             System.out.println("{\"error\": \"not enough arguments\"}");
             System.exit(1);
