@@ -19,14 +19,30 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
-import java.util.*;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.*;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
@@ -37,13 +53,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+//TODO: !!! improve error handling/error reporting !!!
+
 public class MavenUtils {
 
     private MavenUtils() {
     }
 
     public static Document getParsedExpandedPom(File pomFile) {
-        // TODO: improve error handling/error reporting
 
         System.err.println(String.format("Attempting expansion of POM: %s", pomFile));
 
@@ -57,14 +74,16 @@ public class MavenUtils {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(new File("pom.xml"));
         File tempRepoDir = null;
+
         try {
             tempRepoDir = Files.createTempDirectory(null).toFile();
             request.setLocalRepositoryDirectory(tempRepoDir);
         } catch (java.io.IOException ex) {
             return null;
         }
+
         // FIXME: "-q" is a hack as support for the option is currently missing in maven-invoker
-        request.setGoals(Collections.singletonList("org.apache.maven.plugins:maven-help-plugin:2.2:effective-pom -q"));
+        request.setGoals(Collections.singletonList("org.apache.maven.plugins:maven-help-plugin:3.1.0:effective-pom -q"));
         Properties properties = new Properties();
         properties.setProperty("output", resolvedPom.getAbsolutePath());
         request.setProperties(properties);
@@ -75,12 +94,14 @@ public class MavenUtils {
         invoker.setMavenHome(new File("/usr/share/maven"));
         try {
             invoker.execute(request);
-            recursiveDeleteOnExit(tempRepoDir);
         } catch (org.apache.maven.shared.invoker.MavenInvocationException ex) {
-            // unfortunately we have to call this both if invoker.execute runs fine and when it raises;
-            //   even if it raises, it still might have downloaded something
-            recursiveDeleteOnExit(tempRepoDir);
             return null;
+        } finally {
+            try {
+                recursiveDeleteOnExit(tempRepoDir);
+            } catch (IOException e) {
+                System.err.println(e);
+            }
         }
 
         try {
@@ -126,7 +147,7 @@ public class MavenUtils {
         return resolvedPomFixed;
     }
 
-    public static  Document readFileAsDocument(File inputFile) {
+    public static Document readFileAsDocument(File inputFile) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
         try {
@@ -153,20 +174,20 @@ public class MavenUtils {
         try {
             xpe = xpath.compile("/project/dependencies/dependency");
             dependencies = (NodeList) xpe.evaluate(parsedPom, XPathConstants.NODESET);
-            System.err.println( String.format("Dependencies: %s", dependencies));
+            System.err.println(String.format("Dependencies: %s", dependencies));
         } catch (javax.xml.xpath.XPathExpressionException ex) {
             ex.printStackTrace();
             return depMap;
         }
         for (int i = 0; i < dependencies.getLength(); i++) {
             Element e = (Element) dependencies.item(i);
-            System.err.println( String.format("Element: %s", e));
+            System.err.println(String.format("Element: %s", e));
             String groupId = e.getElementsByTagName("groupId").item(0).getTextContent();
             String artifactId = e.getElementsByTagName("artifactId").item(0).getTextContent();
 
             NodeList versions = e.getElementsByTagName("version");
             String version = "";
-            if(versions.getLength() > 0) {
+            if (versions.getLength() > 0) {
                 version = versions.item(0).getTextContent();
             }
             String classifier = "", type = "";
@@ -180,7 +201,7 @@ public class MavenUtils {
 
             Set<String> dependencyScopes = new HashSet<>();
 
-            if(scopes.getLength() == 0) {
+            if (scopes.getLength() == 0) {
                 String scopeName = "compile";
                 System.err.println(String.format("Defaulting to scope: %s", scopeName));
                 dependencyScopes.add(scopeName);
@@ -190,13 +211,11 @@ public class MavenUtils {
                 }
             }
 
-            for (String scopeName: dependencyScopes) {
+            for (String scopeName : dependencyScopes) {
                 if (!depMap.containsKey(scopeName)) {
                     depMap.put(scopeName, new HashMap<String, Map>());
                 }
-                depMap.get(scopeName).put(
-                        String.format("%s:%s:%s:%s", groupId, artifactId, type, classifier),
-                        version);
+                depMap.get(scopeName).put(String.format("%s:%s:%s:%s", groupId, artifactId, type, classifier), version);
             }
         }
         return depMap;
@@ -206,7 +225,7 @@ public class MavenUtils {
         return Boolean.parseBoolean(System.getenv("MERCATOR_JAVA_RESOLVE_POMS"));
     }
 
-    private static Boolean ignoreDescription(Document pomDocument)  {
+    private static Boolean ignoreDescription(Document pomDocument) {
         XPathFactory xpf = XPathFactory.newInstance();
         XPath xpath = xpf.newXPath();
         XPathExpression xpe = null;
@@ -233,7 +252,7 @@ public class MavenUtils {
         Document parsedPom = readFileAsDocument(pomFile);
         Boolean ignoreDescription = ignoreDescription(parsedPom);
 
-        if(resolvePomsEnabled()) {
+        if (resolvePomsEnabled()) {
             System.err.println("NOTICE: Resolving POMs is enabled.");
 
             parsedPom = getParsedExpandedPom(pomFile);
@@ -249,7 +268,6 @@ public class MavenUtils {
         XPath xpath = xpf.newXPath();
         XPathExpression xpe = null;
 
-
         result.put("pom.xml", new HashMap<String, Map>());
 
         // get dependencies
@@ -264,7 +282,8 @@ public class MavenUtils {
                 ArrayList<String> licenses = (ArrayList<String>) result.get("pom.xml").get("licenses");
                 licenses.add(nl.item(i).getTextContent());
             }
-        } catch (javax.xml.xpath.XPathExpressionException ex) {}
+        } catch (javax.xml.xpath.XPathExpressionException ex) {
+        }
 
         // get scm url
         try {
@@ -273,7 +292,8 @@ public class MavenUtils {
             if (nd != null) {
                 result.get("pom.xml").put("scm_url", nd.getTextContent());
             }
-        } catch (javax.xml.xpath.XPathExpressionException ex) {}
+        } catch (javax.xml.xpath.XPathExpressionException ex) {
+        }
 
         // get other metadata
         List<String> keys = new ArrayList<>(Arrays.asList("groupId", "artifactId", "version", "name", "url"));
@@ -309,19 +329,20 @@ public class MavenUtils {
         return Pattern.matches(pattern, entry.getName());
     }
 
-    // borrowed from https://coderanch.com/t/278832/java/delete-directory-VM-exits
-    private static void recursiveDeleteOnExit(File dir) {
-        // call deleteOnExit for the folder first, so it will get deleted last
-        dir.deleteOnExit();
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                if (f.isDirectory()) {
-                    recursiveDeleteOnExit(f);
-                } else {
-                    f.deleteOnExit();
-                }
+    private static void recursiveDeleteOnExit(File dirToBeDeleted) throws IOException {
+
+        Files.walkFileTree(dirToBeDeleted.toPath(), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
             }
-        }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 }

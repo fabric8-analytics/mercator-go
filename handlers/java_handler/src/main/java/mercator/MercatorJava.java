@@ -155,8 +155,7 @@ public class MercatorJava {
             return "JAR";
         } else if (lcName.endsWith(".war")) {
             return "WAR";
-        }
-        else if (lcName.endsWith(".ear")) {
+        } else if (lcName.endsWith(".ear")) {
             return "EAR";
         }
         return "UNKNOWN";
