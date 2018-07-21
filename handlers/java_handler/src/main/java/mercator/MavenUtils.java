@@ -160,7 +160,7 @@ public class MavenUtils {
         return resolvedPomFixed;
     }
 
-    private static Document readFileAsDocument(File inputFile) {
+    public static Document readFileAsDocument(File inputFile) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
         try {
