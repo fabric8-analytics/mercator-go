@@ -2,25 +2,52 @@
 # vim: set fileencoding=utf-8
 
 
-java_result = {'digests': {'manifest': '5d6f9b6a9ddca2a28c0216cc44efb2e20d9c23b5'}, 'ecosystem': 'Java-JAR', 'result': {
-    'kind': 'JAR',
-    'maven_id': {'artifactId': 'json-simple', 'groupId': 'com.googlecode.json-simple', 'version': '1.1.1'},
-    'manifest': {'Tool': 'Bnd-1.50.0', 'Built-By': 'fangyidong', 'Build-Jdk': '1.6.0_26',
-                 'Export-Package': 'org.json.simple;uses:="org.json.simple.parser";version="1.1.1",org.json.simple.parser;uses:="org.json.simple";version="1.1.1"',
-                 'Bundle-Description': 'A simple Java toolkit for JSON',
-                 'Bundle-SymbolicName': 'com.googlecode.json-simple', 'Bundle-ManifestVersion': '2',
-                 'Bundle-License': 'http://www.apache.org/licenses/LICENSE-2.0.txt', 'Bundle-Name': 'JSON.simple',
-                 'Manifest-Version': '1.0', 'Bundle-Version': '1.1.1', 'Bnd-LastModified': '1329633057225',
-                 'Created-By': 'Apache Maven Bundle Plugin'},
-    'pom.xml': {'artifactId': 'json-simple',
-                'dependencies': {'compile': {'junit:junit::': '4.10'}},
-                'description': 'A simple Java toolkit for JSON',
-                'groupId': 'com.googlecode.json-simple',
-                'name': 'JSON.simple',
-                'url': 'http://code.google.com/p/json-simple/',
-                'version': '1.1.1',
-                'licenses': ['The Apache Software License, Version 2.0'],
-                'scm_url': 'http://json-simple.googlecode.com/svn/trunk/'}}}
+java_result = {
+    'digests': {
+        'manifest': '5d6f9b6a9ddca2a28c0216cc44efb2e20d9c23b5'
+    },
+    'ecosystem': 'Java-JAR',
+    'result': {
+        'kind': 'JAR',
+        'maven_id': {
+            'artifactId': 'json-simple',
+            'groupId': 'com.googlecode.json-simple',
+            'version': '1.1.1'
+        },
+        'manifest': {
+            'Tool': 'Bnd-1.50.0',
+            'Built-By': 'fangyidong',
+            'Build-Jdk': '1.6.0_26',
+            'Export-Package': 'org.json.simple;uses:="org.json.simple.parser";version="1.1.1",org.json.simple.parser;uses:="org.json.simple";version="1.1.1"',
+            'Bundle-Description': 'A simple Java toolkit for JSON',
+            'Bundle-SymbolicName': 'com.googlecode.json-simple',
+            'Bundle-ManifestVersion': '2',
+            'Bundle-License': 'http://www.apache.org/licenses/LICENSE-2.0.txt',
+            'Bundle-Name': 'JSON.simple',
+            'Manifest-Version': '1.0',
+            'Bundle-Version': '1.1.1',
+            'Bnd-LastModified': '1329633057225',
+            'Created-By': 'Apache Maven Bundle Plugin'
+        },
+        'pom.xml': {
+            'artifactId': 'json-simple',
+            'dependencies': {
+                'compile': {
+                    'junit:junit::': '4.10'
+                }
+            },
+            'description': 'A simple Java toolkit for JSON',
+            'groupId': 'com.googlecode.json-simple',
+            'name': 'JSON.simple',
+            'url': 'http://code.google.com/p/json-simple/',
+            'version': '1.1.1',
+            'licenses': [
+                'The Apache Software License, Version 2.0'
+            ],
+            'scm_url': 'http://json-simple.googlecode.com/svn/trunk/'
+        }
+    }
+}
 
 javascript_result = {'digests': {'manifest': '214c91cc37bd9f56c1f79970fe0b34e2af9dac41'}, 'ecosystem': 'NPM',
                      'result': {'files': ['LICENSE', 'HISTORY.md', 'index.js'], 'scripts': {'lint': 'eslint **/*.js',
@@ -165,4 +192,4 @@ gradle_result = {
          "digests": {
             "manifest": "561092e9aa9d3924eb37bb734c15df6e286ad154"
          }
-      } 
+      }
