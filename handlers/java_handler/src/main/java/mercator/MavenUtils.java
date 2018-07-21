@@ -84,7 +84,12 @@ public class MavenUtils {
         File tempRepoDir = null;
 
         try {
-            tempRepoDir = Files.createTempDirectory(null).toFile();
+            String localRepo = System.getenv("MERCATOR_JAVA_LOCAL_REPO");
+            if (localRepo != null) {
+                tempRepoDir = new File(localRepo);
+            } else {
+                tempRepoDir = Files.createTempDirectory(null).toFile();
+            }
             request.setLocalRepositoryDirectory(tempRepoDir);
         } catch (java.io.IOException ex) {
             return null;
