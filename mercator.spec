@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    25%{?dist}
+Release:    26%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -68,6 +68,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Sat Jul 21 2018 Michal Srb <michal@redhat.com> - 1-26
+- [java] Make Maven local repo location configurable
+
 * Fri Apr 27 2018 Saleem Ansari <tuxdna@gmail.com> - 1-25
 - Remove duplicate XML start tags from expanded pom
 - https://github.com/fabric8-analytics/mercator-go/pull/44
