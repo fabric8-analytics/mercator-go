@@ -20,7 +20,7 @@ run_tests() {
     make check
 }
 
-# Current copr token has expiration date: 2018-05-29
+# Current copr token has expiration date: 2019-01-19
 # After that date you need to update it in almighty-jobs/devtools-ci-index.yaml
 # Get you token at https://copr.fedorainfracloud.org/api/ and send login/token
 # to bstinson
@@ -29,7 +29,7 @@ create_copr_config() {
     cat > ~/.config/copr <<EOF
 [copr-cli]
 login = ${COPR_LOGIN_MERCATOR}
-username = jpopelka
+username = msrb
 token = ${COPR_TOKEN_MERCATOR}
 copr_url = https://copr.fedorainfracloud.org
 EOF
@@ -40,7 +40,7 @@ build_rpm() {
     ./make_rpm.sh --source
 
     create_copr_config
-    copr-cli build jpopelka/mercator ~/rpmbuild/SRPMS/mercator-*.src.rpm
+    copr-cli build msrb/mercator ~/rpmbuild/SRPMS/mercator-*.src.rpm
 }
 
 build_test_rpm() {
@@ -48,7 +48,7 @@ build_test_rpm() {
     ./make_rpm.sh --source
 
     create_copr_config
-    copr-cli build jpopelka/mercator-test ~/rpmbuild/SRPMS/mercator-*.src.rpm
+    copr-cli build msrb/mercator-test ~/rpmbuild/SRPMS/mercator-*.src.rpm
 }
 
 load_jenkins_vars
