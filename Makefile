@@ -78,7 +78,7 @@ handlers:
 	@if [ "$(GOLANG)" == "YES" ]; then \
 		pushd ./handlers/golang_handler && $(MAKE) all; \
 		popd; \
-		cat handler_templates/handler_goglide >> handlers.yml; \
+		cat handler_templates/handler_golang >> handlers.yml; \
 	fi
 	@if [ "$(GRADLE)" == "YES" ]; then \
 		pushd ./handlers/gradle_handler && $(MAKE) all; \
