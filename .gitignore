@@ -1,6 +1,7 @@
 /handlers/dotnet
 /handlers/dotnet_handler/packages/
-/handlers/golang
+/handlers/goglide
+/handlers/gopkg
 /handlers/golang_handler/vendor/
 /handlers/haskell
 /handlers/java

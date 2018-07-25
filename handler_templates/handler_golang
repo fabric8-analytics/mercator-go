@@ -5,3 +5,11 @@
      - "^glide\\.yaml$"
     lockfile:
      - "glide\\.lock$"
+  - name: "Go-Pkg"
+    description: "Gopkg"
+    binary: "python3"
+    handler: "gopkg"
+    filepatterns:
+     - "^Gopkg\\.toml$"
+    lockfile:
+     - "Gopkg\\.lock$"
