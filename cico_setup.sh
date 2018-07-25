@@ -45,6 +45,7 @@ build_rpm() {
 
 build_test_rpm() {
     rpmdev-setuptree
+    rpmdev-bumpspec -n "0-${BUILD_NUMBER}.pr${ghprbPullId}" mercator.spec
     ./make_rpm.sh --source
 
     create_copr_config
