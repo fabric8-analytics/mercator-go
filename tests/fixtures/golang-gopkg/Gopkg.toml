@@ -1,0 +1,11 @@
+ignored = [
+  "github.com/fabric8-services*",
+]
+
+[[constraint]]
+  name = "github.com/asaskevich/govalidator"
+  version = "5.0.0"
+
+[[constraint]]
+  name = "github.com/dgrijalva/jwt-go"
+  version = "3.0.0"

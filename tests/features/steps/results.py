@@ -112,7 +112,7 @@ rust_result = {'result': {'repository': None, 'readme': None, 'authors': ['Pavel
 
 haskell_result = {"digests": {"manifest": "2e8aabfd637644ae498235cf02c2890c319846e3" },"ecosystem": "HaskellCabal","result": {"mdLicense":"MIT","mdHomePage":"","mdDependencies":["base >=4.6.0","Cabal >=1.16.0","aeson >=1.2.1.0","filepath >=1.3.0.1","directory >=1.2.7.1","text >=1.2.2.2"],"mdIssueUrl":"","mdName":"mercator-hs","mdCategory":"Data","mdAuthor":"Pavel Odvody","mdCopyright":"Pavel Odvody 2017","mdDescription":"Haskell package manifest handler for Mercator","mdMaintainer":"podvody@redhat.com","mdRepos":[{"rpType":"git","rpName":"master","rpURL":"git://github.com/shaded-enmity/mercator-hs"}],"mdLockedDeps":[]}}
 
-golang_result = {
+goglide_result = {
          "ecosystem": "Go-Glide",
          "result": {
             "_dependency_tree_lock_file": {
@@ -137,6 +137,48 @@ golang_result = {
             "testImport": [{"package": "github.com/arschles/assert"}]
          },
          "digests": {"manifest": "6f40cd940047e7120c3985f92337a446d0de15da", "lockfile": "d33a9bbc82c409839259f3ebab5c1849bfb70086"}}
+
+
+gopkg_result = {
+    "ecosystem": "Go-Pkg",
+    "result": {
+        "_dependency_tree_lock_file": {
+            "packages": [
+                {
+                    "name": "github.com/asaskevich/govalidator",
+                    "revision": "7b3beb6df3c42abd3509abfc3bcacc0fbfb7c877",
+                    "version": "v5"
+                },
+                {
+                    "name": "github.com/dgrijalva/jwt-go",
+                    "revision": "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e",
+                    "version": "v3.2.0"
+                },
+                {
+                    "name": "github.com/dgrijalva/jwt-go/request",
+                    "revision": "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e",
+                    "version": "v3.2.0"
+                }
+            ]
+        },
+        "constraint": [
+            {
+                "name": "github.com/asaskevich/govalidator",
+                "version": "5.0.0"
+            },
+            {
+                "name": "github.com/dgrijalva/jwt-go",
+                "version": "3.0.0"
+            }
+        ],
+        "override": []
+    },
+    "digests": {
+        "manifest": "3b77db2af3931746e38359469848b900bd6b8bf5",
+        "lockfile": "3b693934be93db9012a2fef962037541a5ad2e3a"
+    }
+}
+
 
 gradle_result = {
          "ecosystem": "GradleBuild",

@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    26%{?dist}
+Release:    27%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -15,10 +15,14 @@ BuildRequires:  make openssl-devel golang git
 # python handler
 %if 0%{?rhel}
 BuildRequires:  python34-devel
+BuildRequires:  python34-toml
 Requires:       python34
+Requires:       python34-toml
 %else
 BuildRequires:  python3-devel
+BuildRequires:  python3-toml
 Requires:       python3
+Requires:       python3-toml
 %endif
 
 # ruby handler
@@ -68,6 +72,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Wed Jul 25 2018 Michal Srb <michal@redhat.com> - 1-27
+- [golang] Add support for Gopkg
+
 * Sat Jul 21 2018 Michal Srb <michal@redhat.com> - 1-26
 - [java] Make Maven local repo location configurable
 

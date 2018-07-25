@@ -15,7 +15,8 @@ SCANNED_RUBY = 'fixtures/ruby'
 SCANNED_DOTNET = 'fixtures/dotnet'
 SCANNED_RUST = 'fixtures/rust'
 SCANNED_HASKELL = 'fixtures/haskell'
-SCANNED_GOLANG = 'fixtures/golang'
+SCANNED_GOLANG_GLIDE = 'fixtures/golang-glide'
+SCANNED_GOLANG_GOPKG = 'fixtures/golang-gopkg'
 SCANNED_GRADLE = 'fixtures/gradle'
 
 result_dict = {'javascript': javascript_result,
@@ -26,7 +27,8 @@ result_dict = {'javascript': javascript_result,
                'python-dist': python_dist_result,
                'rustcargo': rust_result,
                'haskell': haskell_result,
-               'golang': golang_result,
+               'goglide': goglide_result,
+               'gopkg': gopkg_result,
                'gradle': gradle_result
                }
 
@@ -107,17 +109,23 @@ def get_scan_info(context):
 
 @when('Scanning the Go Glide files')
 def get_scan_info(context):
-    context.out = subprocess.check_output(['mercator', SCANNED_GOLANG]).decode('utf-8')
-    context.ecosystem = 'golang'
+    context.out = subprocess.check_output(['mercator', SCANNED_GOLANG_GLIDE]).decode('utf-8')
+    context.ecosystem = 'goglide'
+
+
+@when('Scanning the Go Pkg files')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_GOLANG_GOPKG]).decode('utf-8')
+    context.ecosystem = 'gopkg'
 
 
 @when('Scanning the build.gradle file')
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_GRADLE]).decode('utf-8')
     context.ecosystem = 'gradle'
+
+
 @then('We have correct output')
-
-
 def check_scan_info(context):
     test_case = json.loads(context.out)
     assert len(test_case["items"]) == 1
