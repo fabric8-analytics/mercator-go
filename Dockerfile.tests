@@ -1,4 +1,4 @@
-FROM fedora:27
+FROM fedora:28
 
 ENV PATH="$PATH:/root/.cargo/bin" \
     GOPATH=/tmp \
@@ -31,7 +31,7 @@ RUN pip3 install behave
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y 
 
 # fix them NuGets certificates
-RUN yes | certmgr -ssl -m https://go.microsoft.com && yes | certmgr -ssl -m https://nuget.org
+RUN cert-sync /etc/pki/tls/certs/ca-bundle.crt
 
 WORKDIR /mercator-go
 
