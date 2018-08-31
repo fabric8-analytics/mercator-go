@@ -3,15 +3,15 @@ Mercator 2.0
 
 Mercator is a Swiss army knife for obtaining package metadata across various package ecosystems:
 
-| Language | Ecosystem |
-|----------|-----------|
-| Python   | PyPI |
-| Ruby     | Gems |
-| Node     | NPM |
-| Java     | Maven |
-| Rust     | Cargo |
-| .NET     | Nuget |
-| Haskell  | Hackage |
+| Language | Ecosystem | Valid Manifest Files |
+|----------|-----------| --------------------- |
+| Python   | PyPI | 1. [setup.py](https://docs.python.org/3/distutils/setupscript.html) <br> 2.  [PKG-INFO](https://www.python.org/dev/peps/pep-0314/) <br> 3. [requirements.txt](https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format)|
+| Ruby     | Gems | 1. [Gemspec](https://guides.rubygems.org/specification-reference/) <br> 2. [Gemfile.lock](https://bundler.io/v1.12/rationale.html) |
+| Node     | NPM | 1. [package.json](https://docs.npmjs.com/files/package.json) <br> 2. [package-lock.json](https://docs.npmjs.com/files/package-lock.json) <br> 3. [npm-shrinkwrap.json](https://docs.npmjs.com/files/shrinkwrap.json) | 
+| Java     | Maven | 1. [JAR File](https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jar.html) <br> 2. [pom.xml](https://maven.apache.org/pom.html) <br> 3. [build.gradle](https://docs.gradle.org/current/dsl/)
+| Rust     | Cargo | 1. [Cargo.toml](https://doc.rust-lang.org/cargo/reference/manifest.html) <br> 2. [Cargo.lock](https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html)
+| .NET     | Nuget | 1. [.sln files](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file?view=vs-2017) <br> 2. [.dll](https://docs.microsoft.com/en-us/dotnet/standard/assembly-format) <br> 3. .nupkg file <br> 4. .nuspec file <br> 5. AssemblyInfo.cs file
+| Haskell  | Hackage | 1. [.cabal file](https://downloads.haskell.org/~ghc/7.0.2/docs/html/libraries/Cabal/Distribution-PackageDescription.html)
 
 Simply point Mercator at some directory and it will walk down all child directories and collect information
 about all encountered package manifests. The output is always a JSON document describing what has been
