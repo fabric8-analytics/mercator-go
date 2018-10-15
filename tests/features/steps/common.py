@@ -55,7 +55,7 @@ def compare_dictionaries(a, b):
 @given('We have mercator installed')
 def step_impl(context):
     # this is workaround until mercator -h returns true
-    subprocess.check_output(['ls', '/usr/bin/mercator'])
+    subprocess.check_output(['ls', '/usr/local/bin/mercator'])
 
 
 @when('Scanning the jar file')
