@@ -88,7 +88,7 @@ type Output struct {
 
 // Define command line flags
 func init() {
-	flag.StringVar(&configYaml, "config", "/usr/share/mercator/handlers.yml", "location of config file")
+	flag.StringVar(&configYaml, "config", "/usr/local/share/mercator/handlers.yml", "location of config file")
 	flag.BoolVar(&noHandlers, "no-handlers", false, "only print found files and their ecosystem")
 	archiveTypes = map[string]bool{
 		"application/zip": true,
