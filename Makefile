@@ -111,7 +111,7 @@ install:
 	mkdir -p ${DESTDIR}/bin ${HANDLERSDIR}
 	cp ${BIN_NAME} ${DESTDIR}/bin/${BIN_NAME}
 	cp handlers.yml ${HANDLERSDIR}
-	cp -f handlers/* ${HANDLERSDIR} || :
+	cp -rf handlers/* ${HANDLERSDIR} || :
 	# bundled python pkginfo module
 	cp -rf handlers/python_handler/pkginfo/ ${HANDLERSDIR}
 	# bundle gradle dependencies
