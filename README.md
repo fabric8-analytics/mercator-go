@@ -8,19 +8,20 @@ Mercator is a Swiss army knife for obtaining package metadata across various pac
 | Python   | PyPI | 1. [setup.py](https://docs.python.org/3/distutils/setupscript.html) <br> 2.  [PKG-INFO](https://www.python.org/dev/peps/pep-0314/) <br> 3. [requirements.txt](https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format)|
 | Ruby     | Gems | 1. [Gemspec](https://guides.rubygems.org/specification-reference/) <br> 2. [Gemfile.lock](https://bundler.io/v1.12/rationale.html) |
 | Node     | NPM | 1. [package.json](https://docs.npmjs.com/files/package.json) <br> 2. [package-lock.json](https://docs.npmjs.com/files/package-lock.json) <br> 3. [npm-shrinkwrap.json](https://docs.npmjs.com/files/shrinkwrap.json) | 
-| Java     | Maven | 1. [JAR File](https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jar.html) <br> 2. [pom.xml](https://maven.apache.org/pom.html) <br> 3. [build.gradle](https://docs.gradle.org/current/dsl/)
+| Java     | Maven | 1. [JAR file](https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jar.html) <br> 2. [pom.xml](https://maven.apache.org/pom.html) <br> 3. [build.gradle](https://docs.gradle.org/current/dsl/)
 | Rust     | Cargo | 1. [Cargo.toml](https://doc.rust-lang.org/cargo/reference/manifest.html) <br> 2. [Cargo.lock](https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html)
 | .NET     | Nuget | 1. [.sln files](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file?view=vs-2017) <br> 2. [.dll](https://docs.microsoft.com/en-us/dotnet/standard/assembly-format) <br> 3. .nupkg file <br> 4. .nuspec file <br> 5. AssemblyInfo.cs file
 | Haskell  | Hackage | 1. [.cabal file](https://downloads.haskell.org/~ghc/7.0.2/docs/html/libraries/Cabal/Distribution-PackageDescription.html)
+| Golang   | Golang | 1. [glide.yaml](https://glide.readthedocs.io/en/latest/glide.yaml/) <br> 2. [glide.lock](https://glide.readthedocs.io/en/latest/glide.lock/) <br> 3. [Gopkg.toml](https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md)
 
 Simply point Mercator at some directory and it will walk down all child directories and collect information
 about all encountered package manifests. The output is always a JSON document describing what has been
 found, please note that the key/value layout of the JSON document depends on the package ecosystem
-that produced it, so if you want to do some further processing or analytics you may want to [normalize the data](https://github.com/fabric8-analytics/fabric8-analytics-worker/blob/master/f8a_worker/data_normalizer.py).
+that produced it, so if you want to do some further processing or analytics you may want to [normalize the data](https://github.com/fabric8-analytics/fabric8-analytics-worker/blob/master/f8a_worker/data_normalizer/__init__.py).
 
 ## Contributing
 
-See our [contributing guidelines](https://github.com/fabric8-analytics/common/blob/master/CONTRIBUTING.md) for more info.
+See our [contributing guidelines](https://github.com/fabric8-analytics/fabric8-analytics-common/blob/master/CONTRIBUTING.md) for more info.
  
 ## Installation
 
@@ -65,7 +66,7 @@ mono-devel nuget
 Golang:
 
 ```
-glide
+glide python34-toml
 ```
 
 for Dotnet you have to execute this command first:
@@ -161,9 +162,10 @@ Mercator 1.0 was written mostly in Python, while Python can be considered a ubiq
 * Core
 * Handlers
 
-Where `Core` is a statically linked binary (thus no external dependencies) and `Handlers` are written in ecosystem specific language, the reason for this is two-fold:
+Where `Core` is a statically linked binary (thus no external dependencies) and `Handlers` can be written in ecosystem specific languages. There are two reasons why it might be better to write a handler in ecosystem specific language:
 
 * The target language is best equipped for handling it's ecosystem as it already contains all the necessary bits to handle the packaging
+ * Good example is Java and pom.xml files. Maven knows how to work with pom.xml files and thus letting it to extract metadata from pom.xml files is better than trying to implement the same functionality in other languages
 * The target language is already present on the box, if I'm developing in Java I have no problem running a handler written in Java since the necessary tooling already has to be there
 
 Another crucial difference is that the handler specification is now declarative, and not some random code in some source file, but more about that below.
