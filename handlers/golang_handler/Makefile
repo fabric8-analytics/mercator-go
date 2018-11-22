@@ -28,6 +28,7 @@ all:
 		glide up; \
 		go build -o ../goglide; \
         cp gopkg.py ../gopkg; \
+        cp godep.py ../godep; \
 	popd
 	# if we did those hacks previously, we need to clean after ourselves,
 	# becase the main makefile does similar hacks and it'd fail

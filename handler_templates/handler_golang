@@ -13,3 +13,9 @@
      - "^Gopkg\\.toml$"
     lockfile:
      - "Gopkg\\.lock$"
+  - name: "Go-Godeps"
+    description: "Godeps"
+    binary: "python3"
+    handler: "godep"
+    filepatterns:
+     - "^Godeps\\.json$"

@@ -180,6 +180,125 @@ gopkg_result = {
 }
 
 
+godep_result = {
+    "ecosystem": "Go-Godeps",
+    "result": {
+        "Deps": [
+            {
+                "Comment": "v0.1.0-9-g272ad122d6e5ce",
+                "ImportPath": "github.com/Rican7/retry",
+                "Rev": "272ad122d6e5ce1be757544007cf8bcd1c9c9ab0"
+            },
+            {
+                "Comment": "v0.1.0-9-g272ad122d6e5ce",
+                "ImportPath": "github.com/Rican7/retry/backoff",
+                "Rev": "272ad122d6e5ce1be757544007cf8bcd1c9c9ab0"
+            },
+            {
+                "Comment": "v0.1.0-9-g272ad122d6e5ce",
+                "ImportPath": "github.com/Rican7/retry/jitter",
+                "Rev": "272ad122d6e5ce1be757544007cf8bcd1c9c9ab0"
+            },
+            {
+                "Comment": "v0.1.0-9-g272ad122d6e5ce",
+                "ImportPath": "github.com/Rican7/retry/strategy",
+                "Rev": "272ad122d6e5ce1be757544007cf8bcd1c9c9ab0"
+            },
+            {
+                "ImportPath": "github.com/armon/circbuf",
+                "Rev": "bbbad097214e2918d8543d5201d12bfd7bca254d"
+            },
+            {
+                "Comment": "v9-26-gf9ffefc3facfbe",
+                "ImportPath": "github.com/asaskevich/govalidator",
+                "Rev": "f9ffefc3facfbe0caee3fea233cbb6e8208f4541"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/awserr",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/awsutil",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/client",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/client/metadata",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/corehandlers",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/credentials",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/credentials/endpointcreds",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/credentials/stscreds",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/csm",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v1.14.12",
+                "ImportPath": "github.com/aws/aws-sdk-go/aws/defaults",
+                "Rev": "fde4ded7becdeae4d26bf1212916aabba79349b4"
+            },
+            {
+                "Comment": "v3.5.0",
+                "ImportPath": "github.com/blang/semver",
+                "Rev": "b38d23b8782a487059e8fc8773e9a5b228a77cb6"
+            }
+        ],
+        "GoVersion": "go1.11",
+        "GodepVersion": "v80-k8s-r1",
+        "ImportPath": "k8s.io/kubernetes",
+        "Packages": [
+            "github.com/onsi/ginkgo/ginkgo",
+            "github.com/jteeuwen/go-bindata/go-bindata",
+            "github.com/client9/misspell/cmd/misspell",
+            "github.com/cloudflare/cfssl/cmd/cfssl",
+            "github.com/cloudflare/cfssl/cmd/cfssljson",
+            "github.com/bazelbuild/bazel-gazelle/cmd/gazelle",
+            "github.com/kubernetes/repo-infra/kazel",
+            "k8s.io/kube-openapi/cmd/openapi-gen",
+            "./..."
+        ]
+    },
+    "digests": {
+        "manifest": "f2f803dab9bfeb5ad1d9c921b86a54d0bcb95dc9"
+    }
+}
+
 gradle_result = {
          "ecosystem": "GradleBuild",
          "result": {

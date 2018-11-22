@@ -2,6 +2,7 @@
 /handlers/dotnet_handler/packages/
 /handlers/goglide
 /handlers/gopkg
+/handlers/godep
 /handlers/golang_handler/vendor/
 /handlers/haskell
 /handlers/java

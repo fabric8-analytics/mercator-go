@@ -9,3 +9,8 @@ Feature: Test of Go-Glide handler
     Given We have mercator installed
     When Scanning the Go Pkg files
     Then We have correct output
+
+  Scenario: Successfully test Godeps.json files
+    Given We have mercator installed
+    When Scanning the Godeps.json files
+    Then We have correct output

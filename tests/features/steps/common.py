@@ -17,6 +17,7 @@ SCANNED_RUST = 'fixtures/rust'
 SCANNED_HASKELL = 'fixtures/haskell'
 SCANNED_GOLANG_GLIDE = 'fixtures/golang-glide'
 SCANNED_GOLANG_GOPKG = 'fixtures/golang-gopkg'
+SCANNED_GOLANG_GODEP = 'fixtures/golang-godep'
 SCANNED_GRADLE = 'fixtures/gradle'
 
 result_dict = {'javascript': javascript_result,
@@ -29,6 +30,7 @@ result_dict = {'javascript': javascript_result,
                'haskell': haskell_result,
                'goglide': goglide_result,
                'gopkg': gopkg_result,
+               'godeps': godep_result,
                'gradle': gradle_result
                }
 
@@ -117,6 +119,12 @@ def get_scan_info(context):
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_GOLANG_GOPKG]).decode('utf-8')
     context.ecosystem = 'gopkg'
+
+
+@when('Scanning the Godeps.json files')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_GOLANG_GODEP]).decode('utf-8')
+    context.ecosystem = 'godeps'
 
 
 @when('Scanning the build.gradle file')
