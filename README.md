@@ -12,7 +12,7 @@ Mercator is a Swiss army knife for obtaining package metadata across various pac
 | Rust     | Cargo | 1. [Cargo.toml](https://doc.rust-lang.org/cargo/reference/manifest.html) <br> 2. [Cargo.lock](https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html)
 | .NET     | Nuget | 1. [.sln files](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file?view=vs-2017) <br> 2. [.dll](https://docs.microsoft.com/en-us/dotnet/standard/assembly-format) <br> 3. .nupkg file <br> 4. .nuspec file <br> 5. AssemblyInfo.cs file
 | Haskell  | Hackage | 1. [.cabal file](https://downloads.haskell.org/~ghc/7.0.2/docs/html/libraries/Cabal/Distribution-PackageDescription.html)
-| Golang   | Golang | 1. [glide.yaml](https://glide.readthedocs.io/en/latest/glide.yaml/) <br> 2. [glide.lock](https://glide.readthedocs.io/en/latest/glide.lock/) <br> 3. [Gopkg.toml](https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md)
+| Golang   | Golang | 1. [glide.yaml](https://glide.readthedocs.io/en/latest/glide.yaml/) <br> 2. [glide.lock](https://glide.readthedocs.io/en/latest/glide.lock/) <br> 3. [Gopkg.toml](https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md) <br> 4. [Godeps.json](https://github.com/tools/godep)
 
 Simply point Mercator at some directory and it will walk down all child directories and collect information
 about all encountered package manifests. The output is always a JSON document describing what has been
