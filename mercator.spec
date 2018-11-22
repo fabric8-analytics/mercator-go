@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    27%{?dist}
+Release:    28%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -72,6 +72,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Thu Nov 22 2018 Michal Srb <michal@redhat.com> - 1-28
+- [golang] Add support for Godeps.json
+
 * Wed Jul 25 2018 Michal Srb <michal@redhat.com> - 1-27
 - [golang] Add support for Gopkg
 
