@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    29%{?dist}
+Release:    30%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -76,6 +76,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Tue Nov 27 2018 Michal Srb <michal@redhat.com> - 1-30
+- Fix destination directory for handlers config
+
 * Tue Nov 27 2018 Michal Srb <michal@redhat.com> - 1-29
 - Disable RPM autoreq
 
