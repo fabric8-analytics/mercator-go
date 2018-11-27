@@ -15,11 +15,14 @@ NAME=mercator-go
 BIN_NAME=mercator
 ORG=github.com/fabric8-analytics
 GOPATH_SRC=${GOPATH}/src/${ORG}/${NAME}
+RPM_BUILDROOT=
 DESTDIR_DEFAULT=/usr/local
 DESTDIR=${DESTDIR_DEFAULT}
-HANDLERSDIR=${DESTDIR}/share/${BIN_NAME}
-HANDLERS_CONFIG_DEFAULT=${DESTDIR}/share/mercator/handlers.yml
-HANDLERS_CONFIG=${DESTDIR}/share/mercator/handlers.yml
+EFFECTIVE_DESTDIR=${RPM_BUILDROOT}${DESTDIR}
+HANDLERSDIR_DEFAULT=${DESTDIR_DEFAULT}/share/${BIN_NAME}
+HANDLERSDIR=${EFFECTIVE_DESTDIR}/share/${BIN_NAME}
+HANDLERS_CONFIG_DEFAULT=${DESTDIR_DEFAULT}/share/mercator/handlers.yml
+HANDLERS_CONFIG=${EFFECTIVE_DESTDIR}/share/mercator/handlers.yml
 HANDLERS_TEMPLATE=handler_templates/handlers_template.yml
 RUBY=YES
 NPM=YES
@@ -88,9 +91,10 @@ handlers:
 
 build: handlers
 	go get 'gopkg.in/yaml.v2'
-	@if [ "$(DESTDIR)" != "${DESTDIR_DEFAULT}" ]; then \
-		sed -i -e "s~${HANDLERS_CONFIG_DEFAULT}~${HANDLERS_CONFIG}~" main.go; \
-	fi
+	echo ${HANDLERS_CONFIG_DEFAULT} ${HANDLERS_CONFIG}
+	echo ${HANDLERSDIR_DEFAULT} ${HANDLERSDIR}
+	sed -i -e "s~${HANDLERS_CONFIG_DEFAULT}~${HANDLERS_CONFIG}~" main.go ; \
+	sed -i -e "s~${HANDLERSDIR_DEFAULT}~${HANDLERSDIR}~" handler_templates/handlers_template.yml ; \
 	# for 'go build' to work properly, we need to be in GOPATH_SRC
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		mkdir -p ${GOPATH}/src/${ORG}/; \
@@ -102,14 +106,11 @@ build: handlers
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		rm -f ${GOPATH_SRC}; \
 	fi
-	@if [ "$(DESTDIR)" != "${DESTDIR_DEFAULT}" ]; then \
-		sed -i -e "s~${HANDLERS_CONFIG}~${HANDLERS_CONFIG_DEFAULT}~" main.go; \
-	fi
 
 
 install:
-	mkdir -p ${DESTDIR}/bin ${HANDLERSDIR}
-	cp ${BIN_NAME} ${DESTDIR}/bin/${BIN_NAME}
+	mkdir -p ${EFFECTIVE_DESTDIR}/bin ${HANDLERSDIR}
+	cp ${BIN_NAME} ${EFFECTIVE_DESTDIR}/bin/${BIN_NAME}
 	cp handlers.yml ${HANDLERSDIR}
 	cp -rf handlers/* ${HANDLERSDIR} || :
 	# bundled python pkginfo module
@@ -120,7 +121,7 @@ install:
 	fi
 clean:
 	rm -rf ${HANDLERSDIR}
-	rm -f ${DESTDIR}/bin/${BIN_NAME}
+	rm -f ${EFFECTIVE_DESTDIR}/bin/${BIN_NAME}
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		rm -f ${GOPATH_SRC}; \
 	fi
