@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    30%{?dist}
+Release:    31%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -59,10 +59,10 @@ Obtains manifests from various ecosystems such as NPM, .NET, Java and Python
 yes | certmgr -ssl https://go.microsoft.com
 yes | certmgr -ssl https://nuget.org
 export GOPATH=/tmp
-make build JAVA=YES DOTNET=YES GOLANG=YES GRADLE=YES
+make build DESTDIR=%{_prefix} JAVA=YES DOTNET=YES GOLANG=YES GRADLE=YES
 
 %install
-make install DESTDIR=%{buildroot}%{_prefix}
+make install RPM_BUILDROOT=%{buildroot} DESTDIR=%{_prefix}
 
 %clean
 
@@ -76,6 +76,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Tue Nov 27 2018 Michal Srb <michal@redhat.com> - 1-31
+- Fix build configuration
+
 * Tue Nov 27 2018 Michal Srb <michal@redhat.com> - 1-30
 - Fix destination directory for handlers config
 
