@@ -3,12 +3,16 @@
 
 Name:       mercator
 Version:    1
-Release:    28%{?dist}
+Release:    29%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
 
 Source0:    %{name}.tar.gz
+
+# TODO: re-enable once mono autoreqs are fixed:
+# https://ci.centos.org/view/Devtools/job/devtools-fabric8-analytics-worker-base-fabric8-analytics/69/console
+AutoReq:    no
 
 BuildRequires:  make openssl-devel golang git
 
@@ -72,6 +76,9 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Tue Nov 27 2018 Michal Srb <michal@redhat.com> - 1-29
+- Disable RPM autoreq
+
 * Thu Nov 22 2018 Michal Srb <michal@redhat.com> - 1-28
 - [golang] Add support for Godeps.json
 
