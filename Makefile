@@ -43,6 +43,7 @@ all:
 
 handlers:
 	cp $(HANDLERS_TEMPLATE) handlers.yml
+	sed -i -e "s~${HANDLERSDIR_DEFAULT}~${HANDLERSDIR}~" handlers.yml
 	@if [ "$(PYTHON)" == "YES" ]; then \
 		pushd ./handlers/python_handler && $(MAKE) all; \
 		popd; \
@@ -91,10 +92,7 @@ handlers:
 
 build: handlers
 	go get 'gopkg.in/yaml.v2'
-	echo ${HANDLERS_CONFIG_DEFAULT} ${HANDLERS_CONFIG}
-	echo ${HANDLERSDIR_DEFAULT} ${HANDLERSDIR}
-	sed -i -e "s~${HANDLERS_CONFIG_DEFAULT}~${HANDLERS_CONFIG}~" main.go ; \
-	sed -i -e "s~${HANDLERSDIR_DEFAULT}~${HANDLERSDIR}~" handler_templates/handlers_template.yml ; \
+	sed -i -e "s~${HANDLERS_CONFIG_DEFAULT}~${HANDLERS_CONFIG}~" main.go
 	# for 'go build' to work properly, we need to be in GOPATH_SRC
 	@if [ `pwd` != "${GOPATH_SRC}" ]; then \
 		mkdir -p ${GOPATH}/src/${ORG}/; \

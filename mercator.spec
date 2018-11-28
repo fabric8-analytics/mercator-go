@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    31%{?dist}
+Release:    32%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -76,6 +76,9 @@ make install RPM_BUILDROOT=%{buildroot} DESTDIR=%{_prefix}
 
 
 %changelog
+* Wed Nov 28 2018 Michal Srb <michal@redhat.com> - 1-32
+- Fix handlers.yml
+
 * Tue Nov 27 2018 Michal Srb <michal@redhat.com> - 1-31
 - Fix build configuration
 
