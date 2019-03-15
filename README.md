@@ -16,6 +16,20 @@ How to do it (on Fedora):
   * `dnf install mercator`
 
 
+## Making a new release
+
+The `mercator` binary is distributed in form of a RPM package. If you'd like to release a new version, bump release
+number in `mercator.spec`:
+
+```bash
+rpmdev-bumpspec -c 'short description' mercator.spec
+```
+
+And git-commit and push.
+
+Note install package `rpmdevtools` if you don't have `rpmdev-bumpspec` binary on your system.
+
+
 ## Supported languages/ecosystems
 
 | Language | Ecosystem | Valid Manifest Files |
