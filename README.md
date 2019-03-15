@@ -1,7 +1,22 @@
-Mercator 2.0
+mercator-go
 ============
 
-Mercator is a Swiss army knife for obtaining package metadata across various package ecosystems:
+`mercator` is a tool that can find packages on the filesystem and it can extract metadata about those packages.
+
+## Installation
+
+The easiest way how to install `mercator` is to install it from RPM package
+built in [COPR](https://copr.fedorainfracloud.org/coprs/msrb/mercator/).
+
+How to do it (on Fedora):
+
+* Enable the COPR repository:
+  * `dnf copr enable msrb/mercator`
+* Install `mercator`
+  * `dnf install mercator`
+
+
+## Supported languages/ecosystems
 
 | Language | Ecosystem | Valid Manifest Files |
 |----------|-----------| --------------------- |
@@ -22,10 +37,13 @@ that produced it, so if you want to do some further processing or analytics you 
 ## Contributing
 
 See our [contributing guidelines](https://github.com/fabric8-analytics/fabric8-analytics-common/blob/master/CONTRIBUTING.md) for more info.
- 
-## Installation
 
-Necessary dependencies (package names are taken from Fedora) to build Mercator without any handlers:
+
+## Building
+
+Mercator uses native libraries/tools whenever possible, but because of that it has quite a lot of external dependencies.
+
+Dependencies required by mercator itself:
 
 ```
 openssl-devel git golang make
@@ -105,7 +123,7 @@ Note: You can also take a look at our [spec file](mercator.spec), which we use t
 
 ## Running
 
-After that, `Mercator` is ready to be used:
+After that, `mercator` is ready to be used:
 
 ```
 $ mercator jsl/
@@ -150,7 +168,8 @@ $ mercator jsl/
 ```
 
 ## Tests
-For starting tests you have to execute:
+
+To run tests, simply run:
 ```
 make check
 ```
