@@ -30,6 +30,23 @@ And git-commit and push.
 Note install package `rpmdevtools` if you don't have `rpmdev-bumpspec` binary on your system.
 
 
+### Expired COPR token in CI
+
+In order to be able to build RPMs in CI, there needs be an API token for COPR.
+The token is valid for 6 months.
+
+When the token expires, you will see an error message in CI and the build will fail:
+
+`Error: Login invalid/expired. Please visit https://copr.fedorainfracloud.org/api to get or renew your API token.`
+
+Simply visit [https://copr.fedorainfracloud.org/api](https://copr.fedorainfracloud.org/api) and generate new token.
+Then update the token in CI.
+
+Note you need to have permissions to collaborate on the [mercator COPR project](https://copr.fedorainfracloud.org/coprs/msrb/mercator/).
+Go to [https://copr.fedorainfracloud.org/coprs/msrb/mercator/permissions/](https://copr.fedorainfracloud.org/coprs/msrb/mercator/permissions/)
+and request access (`msrb` and `msehnout` are admins there).
+
+
 ## Supported languages/ecosystems
 
 | Language | Ecosystem | Valid Manifest Files |
