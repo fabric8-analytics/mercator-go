@@ -3,7 +3,7 @@
 
 Name:       mercator
 Version:    1
-Release:    32%{?dist}
+Release:    33%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
@@ -18,10 +18,10 @@ BuildRequires:  make openssl-devel golang git
 
 # python handler
 %if 0%{?rhel}
-BuildRequires:  python34-devel
-BuildRequires:  python34-toml
-Requires:       python34
-Requires:       python34-toml
+BuildRequires:  python36-devel
+BuildRequires:  python36-toml
+Requires:       python36
+Requires:       python36-toml
 %else
 BuildRequires:  python3-devel
 BuildRequires:  python3-toml
@@ -76,6 +76,9 @@ make install RPM_BUILDROOT=%{buildroot} DESTDIR=%{_prefix}
 
 
 %changelog
+* Tue Apr 09 2019 Michal Srb <michal@redhat.com> - 1-33
+- Migrate to Python 3.6
+
 * Wed Nov 28 2018 Michal Srb <michal@redhat.com> - 1-32
 - Fix handlers.yml
 
